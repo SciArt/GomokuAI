@@ -1,4 +1,4 @@
-package view;
+package application;
 
 import java.io.FileInputStream;
 

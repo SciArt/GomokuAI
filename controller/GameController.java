@@ -1,4 +1,4 @@
-package controller;
+package application;
 
 import javafx.application.Platform;
 import javafx.scene.Group;
@@ -7,7 +7,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import view.Sprite;
 
 public class GameController {
 	private Stage stage;
