@@ -12,8 +12,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-class SidebarController extends VBox {
-    SidebarController(double width, double height) {
+class Sidebar extends VBox {
+    private Text currentPlayerText = new Text("Game is not started.");
+
+    Sidebar(GameController gameController) {
         setSpacing(20);
         setPadding(new Insets(20));
         setStyle("-fx-background-color:#DDDDDD;");
@@ -70,6 +72,7 @@ class SidebarController extends VBox {
         Button quitBtn = new Button("Quit");
 
         getChildren().addAll(
+                currentPlayerText,
                 newgameBtn,
                 players,
                 treeDepthText,
@@ -79,6 +82,10 @@ class SidebarController extends VBox {
                 quitBtn);
 
         quitBtn.setOnMouseClicked(e -> Platform.exit());
+        newgameBtn.setOnMouseClicked(e -> gameController.startGame());
     }
 
+    void setCurrentPlayerText(String s){
+        currentPlayerText.setText(s);
+    }
 }

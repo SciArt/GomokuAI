@@ -1,32 +1,17 @@
 package application;
 
-import controller.GameplayController;
+import controller.GameController;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
 public class Main extends Application {
-	
-	private GameplayController mainController;
 
 	@Override
 	public void start(Stage primaryStage) {
-		
-		/*
-		try {
-			BorderPane root = new BorderPane();
-			Scene scene = new Scene(root,400,400);
-			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-			primaryStage.setScene(scene);
-			primaryStage.show();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}*/
-		
-		mainController = new GameplayController(primaryStage);
+
+		new GameController(primaryStage);
 		primaryStage.setFullScreenExitHint("");
-		
-		//mainController.start();
-		
+
 		primaryStage.show();
 	}
 	

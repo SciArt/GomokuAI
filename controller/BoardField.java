@@ -4,50 +4,45 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 
-public class BoardFieldController extends StackPane {
+class BoardField extends StackPane {
 
-    private ImageView blackPieceImage;
-    private ImageView whitePieceImage;
     private ImageView smallDotImage;
 
-    BoardFieldController(){
+    private Piece piece;
+
+    private static int count = 0;
+
+    BoardField( String bgPath ){
 
         setWidth(40);
         setHeight(40);
 
-        ImageView background = new ImageView(new Image("background.png"));
+        ImageView background = new ImageView(new Image(bgPath));
         getChildren().add(background);
+
         background.setFitWidth(40);
         background.setFitHeight(40);
 
-        blackPieceImage = new ImageView(new Image("black-piece.png"));
-        blackPieceImage.setFitWidth(40);
-        blackPieceImage.setFitHeight(40);
-        whitePieceImage = new ImageView(new Image("white-piece.png"));
-        whitePieceImage.setFitWidth(40);
-        whitePieceImage.setFitHeight(40);
         smallDotImage = new ImageView(new Image("small-dot.png"));
 
+        setOnMouseClicked(e -> AddPiece());
 
-        setOnMouseClicked(e -> ChangePiece());
+        setOnMouseEntered(e -> {
+            if( !getChildren().contains(piece) )
+                getChildren().add(smallDotImage);
+        });
 
-        setOnMouseEntered(e -> {getChildren().add(smallDotImage);});
-
-        setOnMouseExited(e -> {getChildren().remove(smallDotImage);});
+        setOnMouseExited(e -> getChildren().remove(smallDotImage));
     }
 
-    private void ChangePiece(){
-        if( getChildren().contains(whitePieceImage) ) {
-            getChildren().remove(whitePieceImage);
-            getChildren().add(blackPieceImage);
-        }
-        else if( getChildren().contains(blackPieceImage) ) {
-            getChildren().remove(blackPieceImage);
-            getChildren().add(whitePieceImage);
-        }
-        else {
-            getChildren().add(whitePieceImage);
+    private void AddPiece(){
+        if(!getChildren().contains(piece)){
+            count += 1;
+            if(count%2 == 0)
+                piece = new Piece(Piece.PieceType.BLACK, count);
+            else
+                piece = new Piece(Piece.PieceType.WHITE, count);
+            getChildren().add(piece);
         }
     }
-
 }

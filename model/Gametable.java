@@ -11,7 +11,7 @@ public class Gametable
 		Player player;
 		Piece.Color color;
 	}
-	private PlayerSlot first, second;
+	private PlayerSlot first = new PlayerSlot(), second = new PlayerSlot();
 	private PlayerSlot current;
 	
 	private int turn;
@@ -184,7 +184,7 @@ public class Gametable
 		return this.openingGame().color;
 	}
 	
-	public static void main(String[] args)
+	/*public static void main(String[] args)
 	{
 		Gametable g = new Gametable();
 		
@@ -200,5 +200,5 @@ public class Gametable
 		g.move(move, 0, 5);
 		
 		System.out.println(g.didConclude(new Board.Position(3,3)));
-	}
+	}*/
 }
