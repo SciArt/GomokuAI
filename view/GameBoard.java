@@ -1,5 +1,6 @@
-package controller;
+package view;
 
+import controller.GameController;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.image.Image;
@@ -7,9 +8,19 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 
-class GameBoard extends GridPane {
+public class GameBoard extends GridPane {
+    GameController gameController;
+
     BoardField fields[];
-    GameBoard(double width, double height){
+
+    public void clickedField(int number){
+        System.out.println("Field [" + number%15 + "][" + number/15 + "] is clicked." );
+        if( gameController.makeMove(number) );
+        fields[number].addPiece();
+    }
+
+    public GameBoard(double width, double height, GameController gameController){
+        this.gameController = gameController;
         setStyle("-fx-background-color: DAE6F3;");
         setMinSize(width, height);
 
@@ -35,23 +46,23 @@ class GameBoard extends GridPane {
 
         for (int i=0; i<15*15; i++) {
             if( i == 0 )
-                fields[i] = new BoardField("background-top-left.png");
+                fields[i] = new BoardField("background-top-left.png", i, this);
             else if( i == 14 )
-                fields[i] = new BoardField("background-top-right.png");
+                fields[i] = new BoardField("background-top-right.png", i, this);
             else if( i == 15*14)
-                fields[i] = new BoardField("background-bottom-left.png");
+                fields[i] = new BoardField("background-bottom-left.png", i, this);
             else if( i == 15*15 - 1)
-                fields[i] = new BoardField("background-bottom-right.png");
+                fields[i] = new BoardField("background-bottom-right.png", i, this);
             else if( i/15 == 0 )
-                fields[i] = new BoardField("background-top.png");
+                fields[i] = new BoardField("background-top.png", i, this);
             else if( i/15 == 14 )
-                fields[i] = new BoardField("background-bottom.png");
+                fields[i] = new BoardField("background-bottom.png", i, this);
             else if( i%15 == 0 )
-                fields[i] = new BoardField("background-left.png");
+                fields[i] = new BoardField("background-left.png", i, this);
             else if( i%15 == 14 )
-                fields[i] = new BoardField("background-right.png");
+                fields[i] = new BoardField("background-right.png", i, this);
             else
-                fields[i] = new BoardField("background.png");
+                fields[i] = new BoardField("background.png", i, this);
 
             add(fields[i], i%15 + 1, i/15 );
         }

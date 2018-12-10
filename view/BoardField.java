@@ -1,4 +1,4 @@
-package controller;
+package view;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -12,7 +12,7 @@ class BoardField extends StackPane {
 
     private static int count = 0;
 
-    BoardField( String bgPath ){
+    BoardField( String bgPath, int number, GameBoard gameBoard ){
 
         setWidth(40);
         setHeight(40);
@@ -25,7 +25,12 @@ class BoardField extends StackPane {
 
         smallDotImage = new ImageView(new Image("small-dot.png"));
 
-        setOnMouseClicked(e -> AddPiece());
+        //setOnMouseClicked(e -> AddPiece());
+
+        setOnMouseClicked( e-> {
+            if( !getChildren().contains(piece) ) // Potem można zdjąć tego IF'a, na razie gametable nie jest podpięty
+                gameBoard.clickedField(number);
+        });
 
         setOnMouseEntered(e -> {
             if( !getChildren().contains(piece) )
@@ -35,7 +40,7 @@ class BoardField extends StackPane {
         setOnMouseExited(e -> getChildren().remove(smallDotImage));
     }
 
-    private void AddPiece(){
+    public void addPiece( /*Piece piece*/ ){
         if(!getChildren().contains(piece)){
             count += 1;
             if(count%2 == 0)

@@ -1,5 +1,6 @@
-package controller;
+package view;
 
+import controller.GameController;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -12,10 +13,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-class Sidebar extends VBox {
+public class Sidebar extends VBox {
     private Text currentPlayerText = new Text("Game is not started.");
 
-    Sidebar(GameController gameController) {
+    public Sidebar(GameController gameController) {
         setSpacing(20);
         setPadding(new Insets(20));
         setStyle("-fx-background-color:#DDDDDD;");
@@ -81,11 +82,11 @@ class Sidebar extends VBox {
                 heuristicParams,
                 quitBtn);
 
-        quitBtn.setOnMouseClicked(e -> Platform.exit());
+        quitBtn.setOnMouseClicked(e -> gameController.closeApp());
         newgameBtn.setOnMouseClicked(e -> gameController.startGame());
     }
 
-    void setCurrentPlayerText(String s){
+    public void setCurrentInfoText(String s){
         currentPlayerText.setText(s);
     }
 }
