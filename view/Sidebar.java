@@ -24,6 +24,7 @@ public class Sidebar extends VBox {
         setMaxWidth(200);
 
         Button newgameBtn = new Button("New Game");
+        Button stopBtn = new Button("Stop Game");
 
         VBox players = new VBox();
         HBox player1 = new HBox();
@@ -75,6 +76,7 @@ public class Sidebar extends VBox {
         getChildren().addAll(
                 currentPlayerText,
                 newgameBtn,
+                stopBtn,
                 players,
                 treeDepthText,
                 treeDepthSlider,
@@ -84,6 +86,7 @@ public class Sidebar extends VBox {
 
         quitBtn.setOnMouseClicked(e -> gameController.closeApp());
         newgameBtn.setOnMouseClicked(e -> gameController.startGame());
+        stopBtn.setOnMouseClicked(e -> gameController.forceStopGame());
     }
 
     public void setCurrentInfoText(String s){

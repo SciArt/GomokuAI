@@ -113,6 +113,12 @@ public class GameController implements Observer
 		}
 	}
 
+	public void forceStopGame(){
+		sidebar.setCurrentInfoText("Game is not running...");
+		if( gametableThread != null )
+			gametableThread.quit();
+	}
+
 	public void closeApp(){
 		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 		alert.setTitle("Quit");

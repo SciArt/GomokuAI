@@ -24,7 +24,7 @@ public class HumanPlayer extends Player {
 	}
 
     public Board.Position makeMove(Board b, model.Piece.Color c) {
-        gameController.setCurrentPlayer(this, c);
+        Platform.runLater(() ->gameController.setCurrentPlayer(this, c));
         
         Board.Position pos = gameController.makeMove();
         
@@ -39,13 +39,13 @@ public class HumanPlayer extends Player {
         ArrayList<Board.Position> white = new ArrayList<>();
 
         System.out.println("dziala");
-        
-        gameController.setCurrentPlayer(this, Piece.Color.Black);
+
+        Platform.runLater(() ->gameController.setCurrentPlayer(this, Piece.Color.Black));
         for(int i = 0; i < black_count; ++i) {
         	black.add(gameController.makeMove());
         }
-        
-        gameController.setCurrentPlayer(this, Piece.Color.White);
+
+        Platform.runLater(() -> gameController.setCurrentPlayer(this, Piece.Color.White));
         for(int i = 0; i < white_count; ++i) {
         	white.add(gameController.makeMove());
         }
