@@ -1,5 +1,6 @@
 package controller;
 
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import model.Board;
@@ -8,6 +9,9 @@ import model.Player;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.Semaphore;
 
 public class HumanPlayer extends Player {
@@ -18,8 +22,7 @@ public class HumanPlayer extends Player {
 	public HumanPlayer(GameController g){
 		this.gameController = g;
 	}
-	
-    @Override
+
     public Board.Position makeMove(Board b, model.Piece.Color c) {
         gameController.setCurrentPlayer(this, c);
         
@@ -30,7 +33,6 @@ public class HumanPlayer extends Player {
         return pos;
     }
 
-    @Override
     public Board.Move makeMove(Board b, int black_count, int white_count) {
 
         ArrayList<Board.Position> black = new ArrayList<>();
@@ -65,36 +67,81 @@ public class HumanPlayer extends Player {
         return new Board.Move(black, white);
     }
 
-    @Override
     public boolean doPickColor(Board b) {
-    	
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+
+        /*Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 System.out.println("OMG WTF");
         alert.setTitle("Pick color");
         alert.setContentText("Do you want to pick color now?");
 System.out.println("OMG WTF");
-        Optional<ButtonType> result = alert.showAndWait();
+        Optional<ButtonType> result = alert.showAndWait();*/
+
+        FutureTask<Optional<ButtonType>> futureTask = new FutureTask(
+                new pickColorPrompt1()
+        );
+        Platform.runLater(futureTask);
+        Optional<ButtonType> result = null;
+        try {
+            result = futureTask.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
 
         return result.get() == ButtonType.OK;
     }
 
-    @Override
     public Piece.Color pickColor(Board b) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        /*Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Pick color");
         alert.setContentText("Which color do you want to pick?");
 
         ButtonType buttonTypeOne = new ButtonType("White");
         ButtonType buttonTypeTwo = new ButtonType("Black");
 
-        alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo);
+        alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo);*/
 
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == buttonTypeOne){
-            return Piece.Color.White;
+        FutureTask<Piece.Color> futureTask = new FutureTask(
+                new pickColorPrompt2()
+        );
+        Platform.runLater(futureTask);
+        Piece.Color result = null;
+        try {
+            result = futureTask.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
         }
-        else {
-            return Piece.Color.Black;
+        return result;
+    }
+
+    class pickColorPrompt1 implements Callable<Optional<ButtonType>> {
+        @Override public Optional<ButtonType> call() throws Exception {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Pick color");
+            alert.setContentText("Do you want to pick color now?");
+            Optional<ButtonType> result = alert.showAndWait();
+            return result;
+        }
+    }
+
+    class pickColorPrompt2 implements Callable<Piece.Color> {
+        @Override public Piece.Color call() throws Exception {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Pick color");
+            alert.setContentText("Which color do you want to pick?");
+
+            ButtonType buttonTypeOne = new ButtonType("White");
+            ButtonType buttonTypeTwo = new ButtonType("Black");
+
+            alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo);
+            Optional<ButtonType> result = alert.showAndWait();
+            if( result.get() == buttonTypeOne )
+                return Piece.Color.White;
+            else
+                return Piece.Color.Black;
         }
     }
 }
