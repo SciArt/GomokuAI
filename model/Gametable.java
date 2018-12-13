@@ -2,7 +2,7 @@ package model;
 
 import java.util.*;
 
-public class Gametable
+public class Gametable extends Observable
 {
 	private final Board board = new Board(15);
 	
@@ -57,6 +57,9 @@ public class Gametable
 	
 	private void resetTable()
 	{
+		for(int i=0;i<board.size();++i) for(int j=0;j<board.size();++j)
+			board.removePiece(i, j);
+		
 		first.color = null;
 		second.color = null;
 		current = first;
@@ -69,6 +72,10 @@ public class Gametable
 		
 		if(current == first) current = second;
 		else if(current == second) current = first;
+		
+		this.setChanged();
+		this.notifyObservers();
+		this.clearChanged();
 	}
 	
 	private boolean move(Board.Move move, int black_count, int white_count)
@@ -145,6 +152,7 @@ public class Gametable
 		{
 			do pos = current.player.makeMove(this.getBoard(), current.color);
 			while( !move(pos, current.color) );
+			
 		}
 		while(!didConclude(pos));
 		
