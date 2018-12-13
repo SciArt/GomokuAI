@@ -6,6 +6,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import model.Board;
 import model.Gametable;
 import model.Piece;
 import model.Player;
@@ -13,16 +14,23 @@ import view.GameBoard;
 import view.Sidebar;
 
 import java.util.Optional;
+import java.util.concurrent.Semaphore;
 
 public class GameController {
-
+	Semaphore mutexSend = new Semaphore(0);
+	
 	Sidebar sidebar = new Sidebar(this);
-
+	GameBoard gameBoard = new GameBoard(600, 600, this);
+	
 	GametableThread gametableThread;
 	Gametable gametable = new Gametable();
-	HumanPlayer player1 = new HumanPlayer();
-	HumanPlayer player2 = new HumanPlayer();
+	HumanPlayer player1 = new HumanPlayer(this);
+	HumanPlayer player2 = new HumanPlayer(this);
 
+	int currentMove = 0;
+	
+	view.Piece.PieceType pieceColor;
+	
 	public GameController(Stage stage) {
 		final double width = 840;
 		final double height = 640;
@@ -40,17 +48,27 @@ public class GameController {
 		stage.setTitle("GomokuAI - swap2");
 
 		root.setRight(sidebar);
-		root.setCenter(new GameBoard(600, 600, this));
+		root.setCenter(gameBoard);
 
 		gametable.setFirstPlayer(player1);
 		gametable.setSecondPlayer(player2);
 	}
 
-	void setCurrentPlayer(Player p){
+	void setCurrentPlayer(Player p, Piece.Color c){
+		String color;
+		if( c == c.White ) {
+			color = "white";
+			pieceColor = view.Piece.PieceType.WHITE;
+		}
+		else {
+			color = "black";
+			pieceColor = view.Piece.PieceType.BLACK;
+		}
+		
 		if( p.equals(player1) )
-			sidebar.setCurrentInfoText("Player1's turn");
+			sidebar.setCurrentInfoText("Player1's turn - " + color);
 		else
-			sidebar.setCurrentInfoText("Player2's turn");
+			sidebar.setCurrentInfoText("Player2's turn - " + color);
 	}
 
 	public void startGame(){
@@ -86,9 +104,24 @@ public class GameController {
 		Platform.exit();
 	}
 
-	public boolean makeMove(int number){
-		//Gametable nie jest podpięty jeszcze więc pozwalam na ruch
-		return true; // Normalnie to trzeba by było zwrócić info o Piece jaki ma być wstawiony
+	public Board.Position makeMove(){
+		synchronized(gametableThread) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		// Tymczasowo, bo jeszcze nie ma obserwatora
+		gameBoard.addPiece(currentMove, pieceColor);
+		
+		return new Board.Position(currentMove%15,currentMove/15);
+	}
+	
+	public void saveMove(int number) {
+		currentMove = number;
+		gametableThread.notify();
 	}
 }
 

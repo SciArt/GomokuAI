@@ -8,13 +8,27 @@ import model.Player;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.concurrent.Semaphore;
 
 public class HumanPlayer extends Player {
 
+	//Semaphore semaphore;
+	GameController gameController;
+	
+	public HumanPlayer(GameController g){
+		this.gameController = g;
+	}
+	
     @Override
     public Board.Position makeMove(Board b, model.Piece.Color c) {
-        Board.Position pos = new Board.Position(0,0);
-
+        gameController.setCurrentPlayer(this, c);
+        
+        System.out.println("dziala2");
+        
+        Board.Position pos = gameController.makeMove();
+        
+        System.out.println("Pos = " + pos.x + ", " + pos.y);
+        
         return pos;
     }
 
@@ -24,6 +38,18 @@ public class HumanPlayer extends Player {
         ArrayList<Board.Position> black = new ArrayList<>();
         ArrayList<Board.Position> white = new ArrayList<>();
 
+        System.out.println("dziala");
+        
+        gameController.setCurrentPlayer(this, Piece.Color.Black);
+        for(int i = 0; i < black_count; ++i) {
+        	black.add(gameController.makeMove());
+        }
+        
+        gameController.setCurrentPlayer(this, Piece.Color.White);
+        for(int i = 0; i < white_count; ++i) {
+        	white.add(gameController.makeMove());
+        }
+        
         /*
         gameController.setPlayer(this);
 

@@ -40,14 +40,17 @@ class BoardField extends StackPane {
         setOnMouseExited(e -> getChildren().remove(smallDotImage));
     }
 
-    public void addPiece( /*Piece piece*/ ){
-        if(!getChildren().contains(piece)){
+    public void addPiece( Piece.PieceType color ){
+        count += 1;
+        piece = new Piece(color, count);
+        getChildren().add(piece);
+    	/*if(!getChildren().contains(piece)){
             count += 1;
             if(count%2 == 0)
                 piece = new Piece(Piece.PieceType.BLACK, count);
             else
                 piece = new Piece(Piece.PieceType.WHITE, count);
             getChildren().add(piece);
-        }
+        }*/
     }
 }

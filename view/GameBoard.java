@@ -15,8 +15,13 @@ public class GameBoard extends GridPane {
 
     public void clickedField(int number){
         System.out.println("Field [" + number%15 + "][" + number/15 + "] is clicked." );
-        if( gameController.makeMove(number) );
-        fields[number].addPiece();
+        gameController.saveMove(number);
+        //if( gameController.makeMove(number) );
+        //fields[number].addPiece();
+    }
+    
+    public void addPiece(int number, Piece.PieceType color) {
+    	fields[number].addPiece(color);
     }
 
     public GameBoard(double width, double height, GameController gameController){
