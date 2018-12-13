@@ -1,5 +1,6 @@
 package view;
 
+import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -41,9 +42,12 @@ class BoardField extends StackPane {
     }
 
     public void addPiece( Piece.PieceType color ){
+    	
         count += 1;
         piece = new Piece(color, count);
-        getChildren().add(piece);
+        Platform.runLater(() -> getChildren().add(piece));
+        //Platform.runLater( getChildren().add(piece) );
+
     	/*if(!getChildren().contains(piece)){
             count += 1;
             if(count%2 == 0)
