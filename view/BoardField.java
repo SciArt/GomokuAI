@@ -57,4 +57,9 @@ class BoardField extends StackPane {
             getChildren().add(piece);
         }*/
     }
+    
+    public Piece getPiece(){
+    	
+        return piece;
+    }
 }

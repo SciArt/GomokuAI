@@ -24,6 +24,11 @@ public class GameBoard extends GridPane {
     	fields[number].addPiece(color);
     }
 
+    public boolean isEmpty(int number)
+    {
+    	return fields[number].getPiece() == null;
+    }
+    
     public GameBoard(double width, double height, GameController gameController){
         this.gameController = gameController;
         setStyle("-fx-background-color: DAE6F3;");
