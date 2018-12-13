@@ -13,16 +13,18 @@ import model.Player;
 import view.GameBoard;
 import view.Sidebar;
 
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Optional;
 import java.util.concurrent.Semaphore;
 
-public class GameController {
+public class GameController implements Observer
+{
 	Semaphore mutexSend = new Semaphore(0);
 	
 	Sidebar sidebar = new Sidebar(this);
 	GameBoard gameBoard = new GameBoard(600, 600, this);
 	
-	private final Object lock = new Object();
 	GametableThread gametableThread;
 	Gametable gametable = new Gametable();
 	HumanPlayer player1 = new HumanPlayer(this);
@@ -57,6 +59,24 @@ public class GameController {
 
 		gametable.setFirstPlayer(player1);
 		gametable.setSecondPlayer(player2);
+		
+		gametable.addObserver(this);
+	}
+	
+	public void update(Observable o, Object ob)
+	{
+		model.Board board = gametable.getBoard();
+		for(int i=0; i<board.size(); ++i) 
+		for(int j=0; j<board.size(); ++j)
+		if(board.getPiece(i, j) != null && gameBoard.isEmpty(j*15 + i))
+		{
+			view.Piece.PieceType color = (board.getPiece(i, j).getColor() == model.Piece.Color.Black) ?
+					view.Piece.PieceType.BLACK : view.Piece.PieceType.WHITE;
+			
+			int position = j*15 + i;
+			
+			gameBoard.addPiece(position, color);
+		}
 	}
 
 	void setCurrentPlayer(Player p, Piece.Color c){
@@ -119,7 +139,7 @@ public class GameController {
 		}
 		
 		// Tymczasowo, bo jeszcze nie ma obserwatora
-		gameBoard.addPiece(currentMove.number, pieceColor);
+		//gameBoard.addPiece(currentMove.number, pieceColor);
 
 		return new Board.Position(currentMove.number%15,currentMove.number/15);
 	}
