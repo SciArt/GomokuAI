@@ -23,8 +23,6 @@ public class HumanPlayer extends Player {
     public Board.Position makeMove(Board b, model.Piece.Color c) {
         gameController.setCurrentPlayer(this, c);
         
-        System.out.println("dziala2");
-        
         Board.Position pos = gameController.makeMove();
         
         System.out.println("Pos = " + pos.x + ", " + pos.y);
@@ -69,10 +67,12 @@ public class HumanPlayer extends Player {
 
     @Override
     public boolean doPickColor(Board b) {
+    	
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+System.out.println("OMG WTF");
         alert.setTitle("Pick color");
         alert.setContentText("Do you want to pick color now?");
-
+System.out.println("OMG WTF");
         Optional<ButtonType> result = alert.showAndWait();
 
         return result.get() == ButtonType.OK;

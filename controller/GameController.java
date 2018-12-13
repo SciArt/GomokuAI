@@ -22,12 +22,17 @@ public class GameController {
 	Sidebar sidebar = new Sidebar(this);
 	GameBoard gameBoard = new GameBoard(600, 600, this);
 	
+	private final Object lock = new Object();
 	GametableThread gametableThread;
 	Gametable gametable = new Gametable();
 	HumanPlayer player1 = new HumanPlayer(this);
 	HumanPlayer player2 = new HumanPlayer(this);
 
-	int currentMove = 0;
+	private static class Lock
+	{
+		int number;
+	}
+	Lock currentMove = new Lock();// = 0;
 	
 	view.Piece.PieceType pieceColor;
 	
@@ -105,23 +110,26 @@ public class GameController {
 	}
 
 	public Board.Position makeMove(){
-		synchronized(gametableThread) {
+		synchronized(currentMove) {
 			try {
-				wait();
+				currentMove.wait();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
 		
 		// Tymczasowo, bo jeszcze nie ma obserwatora
-		gameBoard.addPiece(currentMove, pieceColor);
-		
-		return new Board.Position(currentMove%15,currentMove/15);
+		gameBoard.addPiece(currentMove.number, pieceColor);
+
+		return new Board.Position(currentMove.number%15,currentMove.number/15);
 	}
 	
 	public void saveMove(int number) {
-		currentMove = number;
-		gametableThread.notify();
+		currentMove.number = number;
+		
+		synchronized(currentMove) {
+			currentMove.notify();
+		}
 	}
 }
 
