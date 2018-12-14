@@ -28,7 +28,13 @@ public class GameBoard extends GridPane {
     {
     	return fields[number].getPiece() == null;
     }
-    
+
+    public void cleanBoard(){
+        for (int i=0; i<15*15; i++) {
+            fields[i].clean();
+        }
+    }
+
     public GameBoard(double width, double height, GameController gameController){
         this.gameController = gameController;
         setStyle("-fx-background-color: DAE6F3;");

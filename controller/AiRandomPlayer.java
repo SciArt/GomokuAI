@@ -22,7 +22,7 @@ public class AiRandomPlayer extends Player {
 
         Board.Position pos = new Board.Position(Math.abs(r.nextInt()%15), Math.abs(r.nextInt()%15) );
 
-        System.out.println("Pos = " + pos.x + ", " + pos.y);
+        System.out.println("Pos = " + pos.x + ", " + pos.y + " Color = " + c + "| AI");
 
         return pos;
     }

@@ -100,6 +100,8 @@ public class GameController implements Observer
 		sidebar.setCurrentInfoText("Game is starting...");
 		if( gametableThread != null )
 			gametableThread.quit();
+		gameBoard.cleanBoard();
+
 		gametableThread = new GametableThread(gametable, this);
 		gametableThread.start();
 	}
@@ -117,6 +119,7 @@ public class GameController implements Observer
 		sidebar.setCurrentInfoText("Game is not running...");
 		if( gametableThread != null )
 			gametableThread.quit();
+		gameBoard.cleanBoard();
 	}
 
 	public void closeApp(){

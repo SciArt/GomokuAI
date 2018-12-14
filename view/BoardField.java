@@ -41,6 +41,13 @@ class BoardField extends StackPane {
         setOnMouseExited(e -> getChildren().remove(smallDotImage));
     }
 
+    public void clean(){
+        count = 0;
+        if(getChildren().contains(piece)) {
+            getChildren().remove(piece);
+        }
+    }
+
     public void addPiece( Piece.PieceType color ){
     	
         count += 1;

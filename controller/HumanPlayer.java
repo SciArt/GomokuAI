@@ -28,7 +28,7 @@ public class HumanPlayer extends Player {
         
         Board.Position pos = gameController.makeMove();
         
-        System.out.println("Pos = " + pos.x + ", " + pos.y);
+        System.out.println("Pos = " + pos.x + ", " + pos.y + " Color = " + c + " | Human");
         
         return pos;
     }
