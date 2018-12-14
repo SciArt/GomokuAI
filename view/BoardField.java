@@ -46,6 +46,8 @@ class BoardField extends StackPane {
         if(getChildren().contains(piece)) {
             getChildren().remove(piece);
         }
+        
+        piece = null;
     }
 
     public void addPiece( Piece.PieceType color ){
