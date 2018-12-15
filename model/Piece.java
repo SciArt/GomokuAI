@@ -23,5 +23,13 @@ public class Piece
 	public Piece(Color color) {
 		this.color = color;
 	}
+	
+	public boolean equals(Piece p) {
+		if (this.color == p.color)
+			return true;
+		else
+			return false;
+			
+	}
 }
 
