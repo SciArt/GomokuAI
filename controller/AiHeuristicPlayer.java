@@ -24,10 +24,10 @@ public class AiHeuristicPlayer extends Player {
     public Board.Position makeMove(Board b, model.Piece.Color c) {
         Platform.runLater(() ->gameController.setCurrentPlayer(this, c));
 
-        alfabeta.minimaxAlfabeta(b, c);
+        int h = alfabeta.minimaxAlfabeta(b, c);
         Board.Position pos = alfabeta.getTheBestMove();
         
-        System.out.println("Pos = " + pos.x + ", " + pos.y + " Color = " + c + "| AI Heuristic");
+        System.out.println("Pos = " + pos.x + ", " + pos.y + " Color = " + c + "| AI Heuristic h=" + h);
 
         return pos;
     }
@@ -70,5 +70,9 @@ public class AiHeuristicPlayer extends Player {
             return Piece.Color.White;
         else
             return Piece.Color.Black;
+    }
+    
+    public void setDepth(int newDepth) {
+    	alfabeta.setDepth(newDepth);
     }
 }

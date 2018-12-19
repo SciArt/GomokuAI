@@ -36,6 +36,10 @@ public class Board
 			this.x = x;
 			this.y = y;
 		}
+		
+		public String toString() { 
+		    return "X: " + this.x + ", Y: " + this.y;
+		} 
 	}
 	
 	public static class Move
