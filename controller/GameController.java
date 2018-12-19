@@ -27,8 +27,8 @@ public class GameController implements Observer
 	
 	GametableThread gametableThread;
 	Gametable gametable = new Gametable();
-	HumanPlayer player1 = new HumanPlayer(this);
-	AiHeuristicPlayer player2 = new AiHeuristicPlayer(this, 1);
+	Player player1 = new HumanPlayer(this);
+	Player player2 = new AiHeuristicPlayer(this, 2);
 
 	private static class Lock
 	{
