@@ -141,6 +141,19 @@ public class Gametable extends Observable
 		
 		return false;
 	}
+	//quick fix
+	private void requestMove(Player player, int black_count, int white_count)
+	{
+		Board.Position pos;
+		
+		for(; black_count > 0; --black_count)
+			do pos = player.makeMove(this.getBoard(), Piece.Color.Black);
+			while( !move(pos, Piece.Color.Black));
+		
+		for(; white_count > 0; --white_count)
+			do pos = player.makeMove(this.getBoard(), Piece.Color.White);
+			while( !move(pos, Piece.Color.White));
+	}
 	
 	private PlayerSlot regularGame()
 	{
@@ -184,12 +197,36 @@ public class Gametable extends Observable
 		return this.regularGame();
 	}
 	
+	private PlayerSlot openingGameB()
+	{
+		Board.Position pos;
+		
+		this.requestMove(first.player, 2, 1);
+		
+		if(second.player.doPickColor(this.getBoard()))
+		{
+			do second.color = second.player.pickColor(this.getBoard());
+			while(second.color == null);
+			first.color = (second.color == Piece.Color.Black) ? Piece.Color.White : Piece.Color.Black;
+			
+			return this.regularGame();
+		}
+		
+		this.requestMove(second.player, 1, 1);
+		
+		do first.color = first.player.pickColor(this.getBoard());
+		while(first.color == null);
+		second.color = (first.color == Piece.Color.Black) ? Piece.Color.White : Piece.Color.Black;
+		
+		return this.regularGame();
+	}
+	
 	public Piece.Color startGame()
 	{
 		if(!bothPlayersPresent()) return null;
 		this.resetTable();
 		
-		return this.openingGame().color;
+		return this.openingGameB().color;
 	}
 	
 	/*public static void main(String[] args)
