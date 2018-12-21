@@ -6,10 +6,18 @@ public class Gametable extends Observable
 {
 	private final Board board = new Board(15);
 	
-	private class PlayerSlot
+	public class PlayerSlot
 	{
-		Player player;
-		Piece.Color color;
+		public Player player;
+		public Piece.Color color;
+
+		PlayerSlot(){
+		}
+
+		PlayerSlot(PlayerSlot ps) {
+			player = ps.player;
+			color = ps.color;
+		}
 	}
 	private PlayerSlot first = new PlayerSlot(), second = new PlayerSlot();
 	private PlayerSlot current;
@@ -221,12 +229,12 @@ public class Gametable extends Observable
 		return this.regularGame();
 	}
 	
-	public Piece.Color startGame()
+	public PlayerSlot startGame()
 	{
 		if(!bothPlayersPresent()) return null;
 		this.resetTable();
-		
-		return this.openingGameB().color;
+
+		return new PlayerSlot(this.openingGameB());
 	}
 	
 	/*public static void main(String[] args)

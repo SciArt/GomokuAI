@@ -77,7 +77,7 @@ public class GameController implements Observer
 	public void setPlayer1AsAI(int depth){
 		player1 = new AiHeuristicPlayer(this, depth);
 		gametable.setFirstPlayer(player1);
-		System.out.println("setPlayer1AsAI");
+		System.out.println("setPlayer1AsAI " + depth);
 	}
 
 	public void setPlayer2AsHuman(){
@@ -93,7 +93,7 @@ public class GameController implements Observer
 	public void setPlayer2AsAI(int depth){
 		player2 = new AiHeuristicPlayer(this, depth);
 		gametable.setSecondPlayer(player2);
-		System.out.println("setPlayer2AsAI");
+		System.out.println("setPlayer2AsAI " + depth);
 	}
 
 	public void update(Observable o, Object ob)
@@ -139,13 +139,19 @@ public class GameController implements Observer
 		gametableThread.start();
 	}
 
-	void stopGame( Piece.Color winner ){
+	void stopGame( Gametable.PlayerSlot winner ){
 		System.out.println("Winner " + winner);
 		if( winner != null ) {
-			if (winner == Piece.Color.White)
-				Platform.runLater(() -> sidebar.setCurrentInfoText("White wins!"));
+			if (winner.color == Piece.Color.White)
+				if( winner.player == player1 )
+					Platform.runLater(() -> sidebar.setCurrentInfoText("Player1 (white) wins!"));
+				else
+					Platform.runLater(() -> sidebar.setCurrentInfoText("Player2 (white) wins!"));
 			else
-				Platform.runLater(() -> sidebar.setCurrentInfoText("Black wins!"));
+				if( winner.player == player1 )
+					Platform.runLater(() -> sidebar.setCurrentInfoText("Player1 (black) wins!"));
+				else
+					Platform.runLater(() -> sidebar.setCurrentInfoText("Player2 (black) wins!"));
 		}
 	}
 
@@ -200,7 +206,7 @@ class GametableThread extends Thread {
 	private Gametable gametable;
 	private GameController gameController;
 
-	private Piece.Color winner;
+	private Gametable.PlayerSlot winner;
 	private boolean running = false;
 
 	GametableThread(Gametable gametable, GameController gameController) {
@@ -219,7 +225,7 @@ class GametableThread extends Thread {
 		return running;
 	}
 
-	Piece.Color getWinner(){
+	Gametable.PlayerSlot getWinner(){
 		if( !isRunning() )
 			return winner;
 		else

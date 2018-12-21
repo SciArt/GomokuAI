@@ -66,7 +66,8 @@ public class Sidebar extends ScrollPane {
                         ObservableValue<? extends Boolean> observableValue,
                         Boolean wasChanging,
                         Boolean changing) {
-                    if( !changing ) {
+                    if( wasChanging ) {
+                        treeDepthSlider.setValue(Math.round(treeDepthSlider.getValue()));
                         setupAI();
                     }
                 }
@@ -92,8 +93,8 @@ public class Sidebar extends ScrollPane {
         void setupAI() {
             getChildren().removeAll(treeDepthText, treeDepthSlider, heuristicText, heuristicParams);
             getChildren().addAll(treeDepthText, treeDepthSlider, heuristicText, heuristicParams);
-            Double d = treeDepthSlider.getValue();
-            setPlayerTypeAsAI(this, d.intValue());
+            Long l = Math.round(treeDepthSlider.getValue());
+            setPlayerTypeAsAI(this, l.intValue());
         }
 
         void setupHuman() {
