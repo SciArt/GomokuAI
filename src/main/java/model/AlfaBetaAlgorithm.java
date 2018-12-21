@@ -31,7 +31,7 @@ public class AlfaBetaAlgorithm {
 	}
 	
 	private int alfabeta(Board board, int depth, int alfa, int beta, boolean isPlayer) {
-		if (depth == 0) { //dopisaæ opcje ze stanem koñcowym
+		if (depth == 0) { //dopisaÄ‡ opcje ze stanem koÅ„cowym
 			return h.getPoints(board, color);
 		}
 		

@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import model.Board;
@@ -28,13 +29,13 @@ public class GameController implements Observer
 	GametableThread gametableThread;
 	Gametable gametable = new Gametable();
 	Player player1 = new HumanPlayer(this);
-	Player player2 = new AiHeuristicPlayer(this, 2);
+	Player player2 = new HumanPlayer(this);
 
 	private static class Lock
 	{
 		int number;
 	}
-	Lock currentMove = new Lock();// = 0;
+	final Lock currentMove = new Lock();// = 0;
 	
 	view.Piece.PieceType pieceColor;
 	
@@ -62,7 +63,39 @@ public class GameController implements Observer
 		
 		gametable.addObserver(this);
 	}
-	
+
+	public void setPlayer1AsHuman(){
+		player1 = new HumanPlayer(this);
+		gametable.setFirstPlayer(player1);
+		System.out.println("setPlayer1AsHuman");
+	}
+	public void setPlayer1AsRandom(){
+		player1 = new AiRandomPlayer(this);
+		gametable.setFirstPlayer(player1);
+		System.out.println("setPlayer1AsRandom");
+	}
+	public void setPlayer1AsAI(int depth){
+		player1 = new AiHeuristicPlayer(this, depth);
+		gametable.setFirstPlayer(player1);
+		System.out.println("setPlayer1AsAI");
+	}
+
+	public void setPlayer2AsHuman(){
+		player2 = new HumanPlayer(this);
+		gametable.setSecondPlayer(player2);
+		System.out.println("setPlayer2AsHuman");
+	}
+	public void setPlayer2AsRandom(){
+		player2 = new AiRandomPlayer(this);
+		gametable.setSecondPlayer(player2);
+		System.out.println("setPlayer2AsRandom");
+	}
+	public void setPlayer2AsAI(int depth){
+		player2 = new AiHeuristicPlayer(this, depth);
+		gametable.setSecondPlayer(player2);
+		System.out.println("setPlayer2AsAI");
+	}
+
 	public void update(Observable o, Object ob)
 	{
 		model.Board board = gametable.getBoard();
@@ -107,11 +140,12 @@ public class GameController implements Observer
 	}
 
 	void stopGame( Piece.Color winner ){
+		System.out.println("Winner " + winner);
 		if( winner != null ) {
 			if (winner == Piece.Color.White)
-				sidebar.setCurrentInfoText("White wins!");
+				Platform.runLater(() -> sidebar.setCurrentInfoText("White wins!"));
 			else
-				sidebar.setCurrentInfoText("Black wins!");
+				Platform.runLater(() -> sidebar.setCurrentInfoText("Black wins!"));
 		}
 	}
 

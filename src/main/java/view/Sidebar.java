@@ -2,94 +2,191 @@ package view;
 
 import controller.GameController;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-public class Sidebar extends VBox {
-    private Text currentPlayerText = new Text("Game is not started.");
+public class Sidebar extends ScrollPane {
+    private GameController gameController;
+    private Game game;
 
-    public Sidebar(GameController gameController) {
-        setSpacing(20);
-        setPadding(new Insets(20));
-        setStyle("-fx-background-color:#DDDDDD;");
-        setMinWidth(200);
-        setMaxWidth(200);
+    private Player player1;
+    private Player player2;
 
-        Button newgameBtn = new Button("New Game");
-        Button stopBtn = new Button("Stop Game");
+    class Player extends VBox {
 
-        VBox players = new VBox();
-        HBox player1 = new HBox();
-        HBox player2 = new HBox();
-        Text player1Text = new Text("Player1");
-        Text player2Text = new Text("Player2");
-        ChoiceBox<String> player1ChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList("Human", "AI"));
-        player1ChoiceBox.setValue("Human");
-        ChoiceBox<String> player2ChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList("Human", "AI"));
-        player2ChoiceBox.setValue("Human");
-        player1.getChildren().addAll(player1Text, player1ChoiceBox);
-        player2.getChildren().addAll(player2Text, player2ChoiceBox);
-        players.getChildren().addAll(player1, player2);
-        player1.setSpacing(20);
-        player2.setSpacing(20);
-        players.setSpacing(20);
-        player1.setAlignment(Pos.BASELINE_CENTER);
-        player2.setAlignment(Pos.BASELINE_CENTER);
-
-        Text treeDepthText = new Text(" Tree depth:");
+        private Text playerText;
+        private ChoiceBox<String> choiceBox;
+        private Text treeDepthText = new Text(" Tree depth:");
+        private Text heuristicText = new Text("Heuristic parameters:");
         Slider treeDepthSlider = new Slider();
-        treeDepthSlider.setMin(0);
-        treeDepthSlider.setMax(10);
-        treeDepthSlider.setValue(4);
-        treeDepthSlider.setShowTickLabels(true);
-        treeDepthSlider.setShowTickMarks(true);
-        treeDepthSlider.setMajorTickUnit(1);
-        treeDepthSlider.setMinorTickCount(0);
-        treeDepthSlider.setBlockIncrement(1);
-        treeDepthSlider.setSnapToTicks(true);
-
-        Text heuristicText = new Text("Heuristic parameters:");
-
         HBox heuristicParams = new HBox();
         TextField heuristicParam1TextField = new TextField();
         TextField heuristicParam2TextField = new TextField();
         TextField heuristicParam3TextField = new TextField();
         TextField heuristicParam4TextField = new TextField();
-        heuristicParams.getChildren().addAll(
-                heuristicParam1TextField,
-                heuristicParam2TextField,
-                heuristicParam3TextField,
-                heuristicParam4TextField
+
+        Player(String playerName) {
+            playerText = new Text(playerName);
+
+            choiceBox = new ChoiceBox<>(FXCollections.observableArrayList(
+                    "Human", "AI", "RandomAI"));
+
+            choiceBox.setOnAction( e -> changeSetup());
+
+            setSpacing(20);
+
+            treeDepthSlider.setMin(0);
+            treeDepthSlider.setMax(10);
+            treeDepthSlider.setValue(4);
+            treeDepthSlider.setShowTickLabels(true);
+            treeDepthSlider.setShowTickMarks(true);
+            treeDepthSlider.setMajorTickUnit(1);
+            treeDepthSlider.setMinorTickCount(0);
+            treeDepthSlider.setBlockIncrement(1);
+            treeDepthSlider.setSnapToTicks(true);
+
+            heuristicParams.getChildren().addAll(
+                    heuristicParam1TextField,
+                    heuristicParam2TextField,
+                    heuristicParam3TextField,
+                    heuristicParam4TextField
+            );
+            heuristicParams.setSpacing(10);
+
+            treeDepthSlider.valueChangingProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(
+                        ObservableValue<? extends Boolean> observableValue,
+                        Boolean wasChanging,
+                        Boolean changing) {
+                    if( !changing ) {
+                        setupAI();
+                    }
+                }
+            });
+
+            getChildren().addAll( playerText, choiceBox );
+
+            choiceBox.setValue("Human");
+        }
+
+        void changeSetup() {
+            if(choiceBox.getValue().equals("Human")) {
+                setupHuman();
+            }
+            else if(choiceBox.getValue().equals("AI")) {
+                setupAI();
+            }
+            else if (choiceBox.getValue().equals("RandomAI")) {
+                setupRandom();
+            }
+        }
+
+        void setupAI() {
+            getChildren().removeAll(treeDepthText, treeDepthSlider, heuristicText, heuristicParams);
+            getChildren().addAll(treeDepthText, treeDepthSlider, heuristicText, heuristicParams);
+            Double d = treeDepthSlider.getValue();
+            setPlayerTypeAsAI(this, d.intValue());
+        }
+
+        void setupHuman() {
+            getChildren().removeAll(treeDepthText, treeDepthSlider, heuristicText, heuristicParams);
+            setPlayerTypeAsHuman(this);
+        }
+
+        void setupRandom() {
+            getChildren().removeAll(treeDepthText, treeDepthSlider, heuristicText, heuristicParams);
+            setPlayerTypeAsRandom(this);
+        }
+    }
+
+    class Game extends VBox {
+        private Text currentPlayerText = new Text("Game is not started.");
+
+        Game() {
+            Button newgameBtn = new Button("New Game");
+            Button stopBtn = new Button("Stop Game");
+            Button quitBtn = new Button("Quit");
+
+            setSpacing(20);
+
+            quitBtn.setOnMouseClicked(e -> gameController.closeApp());
+            newgameBtn.setOnMouseClicked(e -> gameController.startGame());
+            stopBtn.setOnMouseClicked(e -> gameController.forceStopGame());
+
+            getChildren().addAll(currentPlayerText,newgameBtn,stopBtn,quitBtn);
+        }
+
+        void setCurrentInfoText(String s){
+            currentPlayerText.setText(s);
+        }
+    }
+
+    public Sidebar(GameController gameController) {
+        this.gameController = gameController;
+
+        setMaxWidth(200);
+        setMinWidth(200);
+        setMinHeight(640);
+        setMaxHeight(640);
+        setStyle("-fx-background:#DDDDDD; -fx-padding: 0;");
+
+        VBox vBox = new VBox();
+
+        vBox.setSpacing(20);
+        vBox.setPadding(new Insets(20));
+        vBox.setStyle("-fx-background-color:#DDDDDD;");
+        vBox.setMinWidth(180);
+        vBox.setMaxWidth(180);
+
+        game = new Game();
+        player1 = new Player("Player1");
+        player2 = new Player( "Player2");
+
+        vBox.getChildren().addAll(
+                game,
+                player1,
+                player2
         );
-        heuristicParams.setSpacing(10);
 
-        Button quitBtn = new Button("Quit");
-
-        getChildren().addAll(
-                currentPlayerText,
-                newgameBtn,
-                stopBtn,
-                players,
-                treeDepthText,
-                treeDepthSlider,
-                heuristicText,
-                heuristicParams,
-                quitBtn);
-
-        quitBtn.setOnMouseClicked(e -> gameController.closeApp());
-        newgameBtn.setOnMouseClicked(e -> gameController.startGame());
-        stopBtn.setOnMouseClicked(e -> gameController.forceStopGame());
+        setContent(vBox);
     }
 
     public void setCurrentInfoText(String s){
-        currentPlayerText.setText(s);
+        game.setCurrentInfoText(s);
+    }
+
+    public void setPlayerTypeAsHuman(Player p) {
+        if( p == player1 ) {
+            gameController.setPlayer1AsHuman();
+        }
+        else if( p == player2 ) {
+            gameController.setPlayer2AsHuman();
+        }
+    }
+
+    public void setPlayerTypeAsAI(Player p, int depth) {
+        if( p == player1 ) {
+            gameController.setPlayer1AsAI(depth);
+        }
+        else if( p == player2 ) {
+            gameController.setPlayer2AsAI(depth);
+        }
+    }
+
+    public void setPlayerTypeAsRandom(Player p) {
+        if( p == player1 ) {
+            gameController.setPlayer1AsRandom();
+        }
+        else if( p == player2 ) {
+            gameController.setPlayer2AsRandom();
+        }
     }
 }
