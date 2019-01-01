@@ -21,9 +21,11 @@ public class Sidebar extends ScrollPane {
 
     class Player extends VBox {
 
+        int treeDepth = 2;
+
         private Text playerText;
         private ChoiceBox<String> choiceBox;
-        private Text treeDepthText = new Text(" Tree depth:");
+        private Text treeDepthText = new Text(" Tree depth: " + treeDepth);
         private Text heuristicText = new Text("Heuristic parameters:");
         Slider treeDepthSlider = new Slider();
         HBox heuristicParams = new HBox();
@@ -43,8 +45,8 @@ public class Sidebar extends ScrollPane {
             setSpacing(20);
 
             treeDepthSlider.setMin(0);
-            treeDepthSlider.setMax(10);
-            treeDepthSlider.setValue(4);
+            treeDepthSlider.setMax(6);
+            treeDepthSlider.setValue(treeDepth);
             treeDepthSlider.setShowTickLabels(true);
             treeDepthSlider.setShowTickMarks(true);
             treeDepthSlider.setMajorTickUnit(1);
@@ -60,16 +62,11 @@ public class Sidebar extends ScrollPane {
             );
             heuristicParams.setSpacing(10);
 
-            treeDepthSlider.valueChangingProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(
-                        ObservableValue<? extends Boolean> observableValue,
-                        Boolean wasChanging,
-                        Boolean changing) {
-                    if( wasChanging ) {
-                        treeDepthSlider.setValue(Math.round(treeDepthSlider.getValue()));
-                        setupAI();
-                    }
+            treeDepthSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+                if( treeDepth != Math.round(newVal.floatValue()) ) {
+                    treeDepth = Math.round(newVal.floatValue());
+                    treeDepthText.setText("Tree depth: " + treeDepth);
+                    Platform.runLater(this::setupAI);
                 }
             });
 
@@ -91,10 +88,16 @@ public class Sidebar extends ScrollPane {
         }
 
         void setupAI() {
-            getChildren().removeAll(treeDepthText, treeDepthSlider, heuristicText, heuristicParams);
-            getChildren().addAll(treeDepthText, treeDepthSlider, heuristicText, heuristicParams);
-            Long l = Math.round(treeDepthSlider.getValue());
-            setPlayerTypeAsAI(this, l.intValue());
+            if( !getChildren().contains(treeDepthText) )
+                getChildren().add(treeDepthText);
+            if( !getChildren().contains(treeDepthSlider) )
+                getChildren().add(treeDepthSlider);
+            /*if( !getChildren().contains(heuristicText) )
+                getChildren().add(heuristicText);
+            if( !getChildren().contains(heuristicParams) )
+                getChildren().add(heuristicParams);*/
+
+            setPlayerTypeAsAI(this, treeDepth);
         }
 
         void setupHuman() {
