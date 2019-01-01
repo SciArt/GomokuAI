@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import javafx.application.Platform;
-import model.AlfaBetaAlgorithm;
-import model.Board;
-import model.Piece;
-import model.Player;
+import model.*;
 
 public class AiHeuristicPlayer extends Player {
 
@@ -27,7 +24,7 @@ public class AiHeuristicPlayer extends Player {
         int h = alfabeta.minimaxAlfabeta(b, c);
         Board.Position pos = alfabeta.getTheBestMove();
         
-        System.out.println("Pos = " + pos.x + ", " + pos.y + " Color = " + c + "| AI Heuristic h=" + h);
+        System.out.println("Pos = " + pos.x + ", " + pos.y + " Color = " + c + "| AI Heuristic h=" + h + "\n");
 
         return pos;
     }
@@ -50,8 +47,20 @@ public class AiHeuristicPlayer extends Player {
     }
 
     public boolean doPickColor(Board b) {
+        //int hBlack = alfabeta.minimaxAlfabeta(b, Piece.Color.Black);
+        //int hWhite = alfabeta.minimaxAlfabeta(b, Piece.Color.White);
+        alfabeta.minimaxAlfabeta(b, Piece.Color.White);
+        b.placePiece(alfabeta.getTheBestMove().x,alfabeta.getTheBestMove().y,new Piece(Piece.Color.White));
 
-        return r.nextBoolean();
+        Heuristic2 h = new Heuristic2();
+        int hBlack = h.getPoints(b, Piece.Color.Black);
+        int hWhite = h.getPoints(b, Piece.Color.White);
+
+        System.out.println("doPickColor: (" + hBlack + " - " + hWhite + " != 0) == " + (hBlack - hWhite != 0) + "\n");
+
+        return (hBlack - hWhite != 0);
+
+        //return r.nextBoolean();
     }
     /*
     public Piece.Color pickColor(Board b) {
@@ -65,11 +74,24 @@ public class AiHeuristicPlayer extends Player {
     }*/
     
     public Piece.Color pickColor(Board b) {
+        //Heuristic2 h = new Heuristic2();
 
-        if( r.nextBoolean() )
+        alfabeta.minimaxAlfabeta(b, Piece.Color.White);
+        b.placePiece(alfabeta.getTheBestMove().x,alfabeta.getTheBestMove().y,new Piece(Piece.Color.White));
+
+        if( alfabeta.minimaxAlfabeta(b, Piece.Color.White) > alfabeta.minimaxAlfabeta(b, Piece.Color.Black) ) {
+            System.out.println("pickColor: Piece.Color.White\n");
+            return Piece.Color.White;
+        }
+        else {
+            System.out.println("pickColor: Piece.Color.Black\n");
+            return Piece.Color.Black;
+        }
+
+        /*if( r.nextBoolean() )
             return Piece.Color.White;
         else
-            return Piece.Color.Black;
+            return Piece.Color.Black;*/
     }
     
     public void setDepth(int newDepth) {

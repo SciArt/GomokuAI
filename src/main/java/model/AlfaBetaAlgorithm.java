@@ -2,14 +2,14 @@ package model;
 
 public class AlfaBetaAlgorithm {
 	private Board.Position theBestMove;
-	Heuristic h;
+	Heuristic2 h;
 	Piece.Color color;
 	int originalDepth;
 	
 	
 	public AlfaBetaAlgorithm(int depth) {
 		theBestMove = new Board.Position(0, 0);
-		h = new Heuristic();
+		h = new Heuristic2();
 		originalDepth = depth;
 		color = Piece.Color.Black;
 	}
@@ -27,7 +27,22 @@ public class AlfaBetaAlgorithm {
 		}
 		//theBestMove = new Board.Position(0, 0);
 		this.color = color;
-		return alfabeta(board, originalDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
+		int current = 0;
+		int oDepth = originalDepth;
+		for( int i = 0; i <= oDepth; ++i ) {
+			originalDepth = i;
+			current = alfabeta(board, i, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
+			System.out.println("Depth: " + i + " Move: " + theBestMove.x + " " + theBestMove.y + " Current: " + current);
+			if( current == Integer.MAX_VALUE ||  current == -Integer.MAX_VALUE) {
+				//System.out.println("Depth: " + i + " Move: " + theBestMove.x + " " + theBestMove.y);
+				System.out.println("break;");
+				break;
+			}
+		}
+		originalDepth = oDepth;
+		return current;
+
+		/*return alfabeta(board, originalDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, true);*/
 	}
 	
 	private int alfabeta(Board board, int depth, int alfa, int beta, boolean isPlayer) {
