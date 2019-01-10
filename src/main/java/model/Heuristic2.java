@@ -73,33 +73,45 @@ public class Heuristic2 {
     public int checkRow(int numberOfRow, Board board, Piece.Color color) {
         int pointSum = 0;
         int whichInLine = 0;
-        int emptyCells = 0;
+        int emptyCurrent = 0;
+        int emptyBefore = 0;
         for(int i=0;i<board.size();i++) {
+            // Na polu znajduje się już jakiś kamyk
             if (board.getPiece(i, numberOfRow) != null) {
+                // Przerwany został szereg pustych pól, więc zapisujemy ile było pustych i zerujemy
+                // Uwzględnia to, że pomiedzy naszymi kamykami może być wiele przerw
+                if( emptyCurrent != 0 ) {
+                    emptyBefore += emptyCurrent;
+                    emptyCurrent = 0;
+                }
+                // Nasz kolor
                 if (board.getPiece(i, numberOfRow).getColor() == color) {
-                    //overline
                     whichInLine++;
                 }
+                // Kolor przeciwnika, trzeba wyzerować wszystko i ewentualnie przypisać punkty
                 else {
-                    if( whichInLine > 0 && whichInLine <= 5 && emptyCells+whichInLine >= 5) {
+                    // emptyCurrent == 0, dlatego nie sprawdzam
+                    if( whichInLine > 0 && whichInLine <= 5 && emptyBefore+whichInLine >= 5) {
                         pointSum += (int) Math.pow(base, whichInLine);
                         if( whichInLine == 5 ) {
                             wins = true;
                         }
                     }
                     whichInLine = 0;
-                    emptyCells = 0;
+                    emptyBefore = 0;
                 }
             }
+            // Pole jest puste
             else {
-                if( whichInLine > 0 && whichInLine <= 5 ) {
+                if( whichInLine > 0 && whichInLine <= 5 && emptyCurrent+emptyBefore+whichInLine >= 5 ) {
                     pointSum += (int) Math.pow(base, whichInLine);
-                    emptyCells = 0;
+                    emptyCurrent = 0;
                     if( whichInLine == 5 ) {
                         wins = true;
                     }
                 }
-                emptyCells++;
+                emptyCurrent++;
+
                 whichInLine = 0;
             }
         }
@@ -111,33 +123,44 @@ public class Heuristic2 {
     public int checkColumn(int numberOfColumn, Board board, Piece.Color color) {
         int pointSum = 0;
         int whichInLine = 0;
-        int emptyCells = 0;
+        int emptyCurrent = 0;
+        int emptyBefore = 0;
         for(int i=0;i<board.size();i++) {
             if (board.getPiece(numberOfColumn, i) != null) {
+                // Przerwany został szereg pustych pól, więc zapisujemy ile było pustych i zerujemy
+                // Uwzględnia to, że pomiedzy naszymi kamykami może być wiele przerw
+                if( emptyCurrent != 0 ) {
+                    emptyBefore += emptyCurrent;
+                    emptyCurrent = 0;
+                }
+                // Nasz kolor
                 if (board.getPiece(numberOfColumn, i).getColor() == color) {
-                    //overline
                     whichInLine++;
                 }
+                // Kolor przeciwnika, trzeba wyzerować wszystko i ewentualnie przypisać punkty
                 else {
-                    if( whichInLine > 0 && whichInLine <= 5 && emptyCells+whichInLine >= 5) {
+                    // emptyCurrent == 0, dlatego nie sprawdzam
+                    if( whichInLine > 0 && whichInLine <= 5 && emptyBefore+whichInLine >= 5) {
                         pointSum += (int) Math.pow(base, whichInLine);
                         if( whichInLine == 5 ) {
                             wins = true;
                         }
                     }
                     whichInLine = 0;
-                    emptyCells = 0;
+                    emptyBefore = 0;
                 }
             }
+            // Pole jest puste
             else {
-                if( whichInLine > 0 && whichInLine <= 5 ) {
+                if( whichInLine > 0 && whichInLine <= 5 && emptyCurrent+emptyBefore+whichInLine >= 5 ) {
                     pointSum += (int) Math.pow(base, whichInLine);
-                    emptyCells = 0;
+                    emptyCurrent = 0;
                     if( whichInLine == 5 ) {
                         wins = true;
                     }
                 }
-                emptyCells++;
+                emptyCurrent++;
+
                 whichInLine = 0;
             }
         }
@@ -149,37 +172,48 @@ public class Heuristic2 {
     public int checkCantLeftToRight(int startRow, int startColumn, Board board, Piece.Color color) {
         int pointSum = 0;
         int whichInLine = 0;
-        int emptyCells = 0;
+        int emptyCurrent = 0;
+        int emptyBefore = 0;
         int currentColumn = startColumn;
         for(int currentRow = startRow;currentRow < board.size() && currentColumn < board.size();
             currentRow++, currentColumn++) {
 
 
             if (board.getPiece(currentRow, currentColumn) != null) {
+                // Przerwany został szereg pustych pól, więc zapisujemy ile było pustych i zerujemy
+                // Uwzględnia to, że pomiedzy naszymi kamykami może być wiele przerw
+                if( emptyCurrent != 0 ) {
+                    emptyBefore += emptyCurrent;
+                    emptyCurrent = 0;
+                }
+                // Nasz kolor
                 if (board.getPiece(currentRow, currentColumn).getColor() == color) {
-                    //overline
                     whichInLine++;
                 }
+                // Kolor przeciwnika, trzeba wyzerować wszystko i ewentualnie przypisać punkty
                 else {
-                    if( whichInLine > 0 && whichInLine <= 5 && emptyCells+whichInLine >= 5) {
+                    // emptyCurrent == 0, dlatego nie sprawdzam
+                    if( whichInLine > 0 && whichInLine <= 5 && emptyBefore+whichInLine >= 5) {
                         pointSum += (int) Math.pow(base, whichInLine);
                         if( whichInLine == 5 ) {
                             wins = true;
                         }
                     }
                     whichInLine = 0;
-                    emptyCells = 0;
+                    emptyBefore = 0;
                 }
             }
+            // Pole jest puste
             else {
-                if( whichInLine > 0 && whichInLine <= 5 ) {
+                if( whichInLine > 0 && whichInLine <= 5 && emptyCurrent+emptyBefore+whichInLine >= 5 ) {
                     pointSum += (int) Math.pow(base, whichInLine);
-                    emptyCells = 0;
+                    emptyCurrent = 0;
                     if( whichInLine == 5 ) {
                         wins = true;
                     }
                 }
-                emptyCells++;
+                emptyCurrent++;
+
                 whichInLine = 0;
             }
         }
@@ -191,35 +225,46 @@ public class Heuristic2 {
     public int checkCantRightToLeft(int startRow, int startColumn, Board board, Piece.Color color) {
         int pointSum = 0;
         int whichInLine = 0;
-        int emptyCells = 0;
+        int emptyCurrent = 0;
+        int emptyBefore = 0;
         int currentRow = startRow;
         for(int currentColumn = startColumn;currentColumn < board.size();currentColumn++) {
 
             if (board.getPiece(currentRow, currentColumn) != null) {
+                // Przerwany został szereg pustych pól, więc zapisujemy ile było pustych i zerujemy
+                // Uwzględnia to, że pomiedzy naszymi kamykami może być wiele przerw
+                if( emptyCurrent != 0 ) {
+                    emptyBefore += emptyCurrent;
+                    emptyCurrent = 0;
+                }
+                // Nasz kolor
                 if (board.getPiece(currentRow, currentColumn).getColor() == color) {
-                    //overline
                     whichInLine++;
                 }
+                // Kolor przeciwnika, trzeba wyzerować wszystko i ewentualnie przypisać punkty
                 else {
-                    if( whichInLine > 0 && whichInLine <= 5 && emptyCells+whichInLine >= 5) {
+                    // emptyCurrent == 0, dlatego nie sprawdzam
+                    if( whichInLine > 0 && whichInLine <= 5 && emptyBefore+whichInLine >= 5) {
                         pointSum += (int) Math.pow(base, whichInLine);
                         if( whichInLine == 5 ) {
                             wins = true;
                         }
                     }
                     whichInLine = 0;
-                    emptyCells = 0;
+                    emptyBefore = 0;
                 }
             }
+            // Pole jest puste
             else {
-                if( whichInLine > 0 && whichInLine <= 5 ) {
+                if( whichInLine > 0 && whichInLine <= 5 && emptyCurrent+emptyBefore+whichInLine >= 5 ) {
                     pointSum += (int) Math.pow(base, whichInLine);
-                    emptyCells = 0;
+                    emptyCurrent = 0;
                     if( whichInLine == 5 ) {
                         wins = true;
                     }
                 }
-                emptyCells++;
+                emptyCurrent++;
+
                 whichInLine = 0;
             }
 
