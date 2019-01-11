@@ -116,6 +116,7 @@ public class Sidebar extends ScrollPane {
 
         Game() {
             Button newgameBtn = new Button("New Game");
+            Button experimentsBtn = new Button("Start Experiments");
             Button stopBtn = new Button("Stop Game");
             Button quitBtn = new Button("Quit");
 
@@ -123,9 +124,10 @@ public class Sidebar extends ScrollPane {
 
             quitBtn.setOnMouseClicked(e -> gameController.closeApp());
             newgameBtn.setOnMouseClicked(e -> gameController.startGame());
+            experimentsBtn.setOnMouseClicked(e -> gameController.startExperiments());
             stopBtn.setOnMouseClicked(e -> gameController.forceStopGame());
 
-            getChildren().addAll(currentPlayerText,newgameBtn,stopBtn,quitBtn);
+            getChildren().addAll(currentPlayerText,newgameBtn,experimentsBtn,stopBtn,quitBtn);
         }
 
         void setCurrentInfoText(String s){

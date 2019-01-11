@@ -121,6 +121,7 @@ System.out.println("OMG WTF");
         @Override public Optional<ButtonType> call() throws Exception {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Pick color");
+            alert.setHeaderText(null);
             alert.setContentText("Do you want to pick color now?");
             Optional<ButtonType> result = alert.showAndWait();
             return result;
@@ -131,6 +132,7 @@ System.out.println("OMG WTF");
         @Override public Piece.Color call() throws Exception {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Pick color");
+            alert.setHeaderText(null);
             alert.setContentText("Which color do you want to pick?");
 
             ButtonType buttonTypeOne = new ButtonType("White");
