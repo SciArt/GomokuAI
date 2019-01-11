@@ -12,6 +12,7 @@ import model.Gametable;
 import model.Piece;
 import model.Player;
 import view.GameBoard;
+import view.InfoDialog;
 import view.Sidebar;
 
 import java.util.Observable;
@@ -21,6 +22,8 @@ import java.util.concurrent.Semaphore;
 
 public class GameController implements Observer
 {
+	int numberOfExperiments = 0;
+
 	Semaphore mutexSend = new Semaphore(0);
 	
 	Sidebar sidebar = new Sidebar(this);
@@ -110,6 +113,11 @@ public class GameController implements Observer
 			
 			gameBoard.addPiece(position, color);
 		}
+
+		if( gametable.getTurnNumber() > 10 ) {
+			gametable.setFirstPlayer(player1);
+			gametable.setSecondPlayer(player2);
+		}
 	}
 
 	void setCurrentPlayer(Player p, Piece.Color c){
@@ -130,7 +138,25 @@ public class GameController implements Observer
 	}
 
 	public void startGame(){
+		numberOfExperiments = 0;
+
 		sidebar.setCurrentInfoText("Game is starting...");
+		if( gametableThread != null )
+			gametableThread.quit();
+		gameBoard.cleanBoard();
+
+		gametableThread = new GametableThread(gametable, this);
+		gametableThread.start();
+	}
+
+	public void startExperiments(){
+		if( numberOfExperiments == 0 )
+			numberOfExperiments = 10;
+
+		gametable.setFirstPlayer(new AiRandomPlayer(this));
+		gametable.setSecondPlayer(new AiRandomPlayer(this));
+
+		sidebar.setCurrentInfoText("Experiments are starting...");
 		if( gametableThread != null )
 			gametableThread.quit();
 		gameBoard.cleanBoard();
@@ -141,17 +167,48 @@ public class GameController implements Observer
 
 	void stopGame( Gametable.PlayerSlot winner ){
 		System.out.println("Winner " + winner);
-		if( winner != null ) {
-			if (winner.color == Piece.Color.White)
-				if( winner.player == player1 )
-					Platform.runLater(() -> sidebar.setCurrentInfoText("Player1 (white) wins!"));
-				else
-					Platform.runLater(() -> sidebar.setCurrentInfoText("Player2 (white) wins!"));
-			else
-				if( winner.player == player1 )
+		if( numberOfExperiments > 0 ) {
+			if (winner != null) {
+				if (winner.color == Piece.Color.White)
+					if (winner.player == player1) {
+						Platform.runLater(() -> sidebar.setCurrentInfoText("Player1 (white) wins!"));
+					} else {
+						Platform.runLater(() -> sidebar.setCurrentInfoText("Player2 (white) wins!"));
+					}
+				else if (winner.player == player1) {
 					Platform.runLater(() -> sidebar.setCurrentInfoText("Player1 (black) wins!"));
-				else
+				} else {
 					Platform.runLater(() -> sidebar.setCurrentInfoText("Player2 (black) wins!"));
+				}
+			} else {
+				Platform.runLater(() -> sidebar.setCurrentInfoText("Draw!"));
+			}
+			numberOfExperiments--;
+			if( numberOfExperiments > 0 ) {
+				Platform.runLater(this::startExperiments);
+			}
+		}
+		else {
+			if (winner != null) {
+				if (winner.color == Piece.Color.White)
+					if (winner.player == player1) {
+						Platform.runLater(() -> sidebar.setCurrentInfoText("Player1 (white) wins!"));
+						Platform.runLater(() -> InfoDialog.showInfoDIalog("End of the game", "Player1 (white) wins!"));
+					} else {
+						Platform.runLater(() -> sidebar.setCurrentInfoText("Player2 (white) wins!"));
+						Platform.runLater(() -> InfoDialog.showInfoDIalog("End of the game", "Player2 (white) wins!"));
+					}
+				else if (winner.player == player1) {
+					Platform.runLater(() -> sidebar.setCurrentInfoText("Player1 (black) wins!"));
+					Platform.runLater(() -> InfoDialog.showInfoDIalog("End of the game", "Player1 (black) wins!"));
+				} else {
+					Platform.runLater(() -> sidebar.setCurrentInfoText("Player2 (black) wins!"));
+					Platform.runLater(() -> InfoDialog.showInfoDIalog("End of the game", "Player2 (black) wins!"));
+				}
+			} else {
+				Platform.runLater(() -> sidebar.setCurrentInfoText("Draw!"));
+				Platform.runLater(() -> InfoDialog.showInfoDIalog("End of the game", "Draw!"));
+			}
 		}
 	}
 
@@ -165,6 +222,7 @@ public class GameController implements Observer
 	public void closeApp(){
 		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 		alert.setTitle("Quit");
+		alert.setHeaderText(null);
 		alert.setContentText("Do you really want to quit?");
 
 		Optional<ButtonType> result = alert.showAndWait();
