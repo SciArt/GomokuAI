@@ -14,6 +14,12 @@ public class Gametable extends Observable
 		PlayerSlot(){
 		}
 
+		PlayerSlot(Player p, Piece.Color pc)
+		{
+			player = p;
+			color = pc;
+		}
+		
 		PlayerSlot(PlayerSlot ps) {
 			player = ps.player;
 			color = ps.color;
@@ -126,6 +132,11 @@ public class Gametable extends Observable
 		return this.recursiveConclusion(temp, x, y, color) + 1;
 	}
 	
+	private boolean isDraw()
+	{
+		return (this.turn > this.board.size() * this.board.size());
+	}
+	
 	private boolean didConclude(Board.Position pos)
 	{
 		if(!board.isValidPosition(pos)) return false;
@@ -171,6 +182,8 @@ public class Gametable extends Observable
 		
 		do
 		{
+			if(isDraw()) return new PlayerSlot(null,null);
+			
 			do pos = current.player.makeMove(this.getBoard(), current.color);
 			while( !move(pos, current.color) );
 			
