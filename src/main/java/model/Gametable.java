@@ -182,7 +182,7 @@ public class Gametable extends Observable
 		
 		do
 		{
-			if(isDraw()) return new PlayerSlot(null,null);
+			if(isDraw()) return null;
 			
 			do pos = current.player.makeMove(this.getBoard(), current.color);
 			while( !move(pos, current.color) );
