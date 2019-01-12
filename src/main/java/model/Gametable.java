@@ -134,7 +134,7 @@ public class Gametable extends Observable
 	
 	private boolean isDraw()
 	{
-		return (this.turn > this.board.size() * this.board.size());
+		return (this.turn >= this.board.size() * this.board.size());
 	}
 	
 	private boolean didConclude(Board.Position pos)
@@ -247,7 +247,11 @@ public class Gametable extends Observable
 		if(!bothPlayersPresent()) return null;
 		this.resetTable();
 
-		return new PlayerSlot(this.openingGameB());
+		PlayerSlot winner = this.openingGameB();
+		if( winner == null )
+			return null;
+		else
+			return new PlayerSlot(winner);
 	}
 	
 	/*public static void main(String[] args)

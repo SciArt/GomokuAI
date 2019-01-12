@@ -116,6 +116,14 @@ public class Heuristic2 {
             }
         }
 
+        if( whichInLine > 0 && whichInLine <= 5 && emptyCurrent+emptyBefore+whichInLine >= 5 ) {
+            pointSum += (int) Math.pow(base, whichInLine);
+            emptyCurrent = 0;
+            if( whichInLine == 5 ) {
+                wins = true;
+            }
+        }
+
         return pointSum;
     }
 
@@ -162,6 +170,14 @@ public class Heuristic2 {
                 emptyCurrent++;
 
                 whichInLine = 0;
+            }
+        }
+
+        if( whichInLine > 0 && whichInLine <= 5 && emptyCurrent+emptyBefore+whichInLine >= 5 ) {
+            pointSum += (int) Math.pow(base, whichInLine);
+            emptyCurrent = 0;
+            if( whichInLine == 5 ) {
+                wins = true;
             }
         }
 
@@ -218,6 +234,14 @@ public class Heuristic2 {
             }
         }
 
+        if( whichInLine > 0 && whichInLine <= 5 && emptyCurrent+emptyBefore+whichInLine >= 5 ) {
+            pointSum += (int) Math.pow(base, whichInLine);
+            emptyCurrent = 0;
+            if( whichInLine == 5 ) {
+                wins = true;
+            }
+        }
+
         return pointSum;
     }
 
@@ -271,6 +295,14 @@ public class Heuristic2 {
             currentRow--;
             if (currentRow < 0)
                 break;
+        }
+
+        if( whichInLine > 0 && whichInLine <= 5 && emptyCurrent+emptyBefore+whichInLine >= 5 ) {
+            pointSum += (int) Math.pow(base, whichInLine);
+            emptyCurrent = 0;
+            if( whichInLine == 5 ) {
+                wins = true;
+            }
         }
 
         return pointSum;

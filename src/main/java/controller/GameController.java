@@ -15,6 +15,8 @@ import view.GameBoard;
 import view.InfoDialog;
 import view.Sidebar;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Optional;
@@ -96,6 +98,8 @@ public class GameController implements Observer
 			gameBoard.addPiece(position, color);
 		}
 
+
+
 		if( gametable.getTurnNumber() > 10 ) {
 			gametable.setFirstPlayer(player1);
 			gametable.setSecondPlayer(player2);
@@ -133,7 +137,7 @@ public class GameController implements Observer
 
 	public void startExperiments(){
 		if( numberOfExperiments == 0 )
-			numberOfExperiments = 10;
+			numberOfExperiments = 20;
 
 		gametable.setFirstPlayer(new AiRandomPlayer(this));
 		gametable.setSecondPlayer(new AiRandomPlayer(this));
@@ -150,24 +154,41 @@ public class GameController implements Observer
 	void stopGame( Gametable.PlayerSlot winner ){
 		System.out.println("Winner " + winner);
 		if( numberOfExperiments > 0 ) {
-			if (winner != null) {
-				if (winner.color == Piece.Color.White)
-					if (winner.player == player1) {
-						Platform.runLater(() -> sidebar.setCurrentInfoText("Player1 (white) wins!"));
+			try {
+				FileWriter fileWriter = new FileWriter("experiments.txt", true);
+				BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+				if (winner != null) {
+					if (winner.color == Piece.Color.White)
+						if (winner.player == player1) {
+							Platform.runLater(() -> sidebar.setCurrentInfoText("Player1 (white) wins!"));
+							bufferedWriter.write("Player1\n");
+						} else {
+							Platform.runLater(() -> sidebar.setCurrentInfoText("Player2 (white) wins!"));
+							bufferedWriter.write("Player2\n");
+						}
+					else if (winner.player == player1) {
+						Platform.runLater(() -> sidebar.setCurrentInfoText("Player1 (black) wins!"));
+						bufferedWriter.write("Player1\n");
 					} else {
-						Platform.runLater(() -> sidebar.setCurrentInfoText("Player2 (white) wins!"));
+						Platform.runLater(() -> sidebar.setCurrentInfoText("Player2 (black) wins!"));
+						bufferedWriter.write("Player2\n");
 					}
-				else if (winner.player == player1) {
-					Platform.runLater(() -> sidebar.setCurrentInfoText("Player1 (black) wins!"));
-				} else {
-					Platform.runLater(() -> sidebar.setCurrentInfoText("Player2 (black) wins!"));
 				}
-			} else {
-				Platform.runLater(() -> sidebar.setCurrentInfoText("Draw!"));
+				else {
+					Platform.runLater(() -> sidebar.setCurrentInfoText("Draw!"));
+					bufferedWriter.write("Draw\n");
+				}
+
+				numberOfExperiments--;
+				if( numberOfExperiments > 0 ) {
+					Platform.runLater(this::startExperiments);
+				}
+
+				bufferedWriter.close();
 			}
-			numberOfExperiments--;
-			if( numberOfExperiments > 0 ) {
-				Platform.runLater(this::startExperiments);
+			catch(Exception e) {
+				e.printStackTrace();
 			}
 		}
 		else {
