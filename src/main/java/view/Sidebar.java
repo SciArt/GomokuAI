@@ -171,28 +171,28 @@ public class Sidebar extends ScrollPane {
 
     public void setPlayerTypeAsHuman(Player p) {
         if( p == player1 ) {
-            gameController.setPlayer1AsHuman();
+            gameController.setPlayer1(new controller.HumanPlayer(gameController));
         }
         else if( p == player2 ) {
-            gameController.setPlayer2AsHuman();
+        	gameController.setPlayer2(new controller.HumanPlayer(gameController));
         }
     }
 
     public void setPlayerTypeAsAI(Player p, int depth) {
         if( p == player1 ) {
-            gameController.setPlayer1AsAI(depth);
+        	gameController.setPlayer1(new controller.AiHeuristicPlayer(gameController, depth));
         }
         else if( p == player2 ) {
-            gameController.setPlayer2AsAI(depth);
+        	gameController.setPlayer2(new controller.AiHeuristicPlayer(gameController, depth));
         }
     }
 
     public void setPlayerTypeAsRandom(Player p) {
         if( p == player1 ) {
-            gameController.setPlayer1AsRandom();
+        	gameController.setPlayer1(new controller.AiRandomPlayer(gameController));
         }
         else if( p == player2 ) {
-            gameController.setPlayer2AsRandom();
+        	gameController.setPlayer2(new controller.AiRandomPlayer(gameController));
         }
     }
 }
