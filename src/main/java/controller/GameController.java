@@ -67,36 +67,18 @@ public class GameController implements Observer
 		gametable.addObserver(this);
 	}
 
-	public void setPlayer1AsHuman(){
-		player1 = new HumanPlayer(this);
+	public void setPlayer1(Player p)
+	{
+		player1 = p;
 		gametable.setFirstPlayer(player1);
-		System.out.println("setPlayer1AsHuman");
+		System.out.println(p);
 	}
-	public void setPlayer1AsRandom(){
-		player1 = new AiRandomPlayer(this);
-		gametable.setFirstPlayer(player1);
-		System.out.println("setPlayer1AsRandom");
-	}
-	public void setPlayer1AsAI(int depth){
-		player1 = new AiHeuristicPlayer(this, depth);
-		gametable.setFirstPlayer(player1);
-		System.out.println("setPlayer1AsAI " + depth);
-	}
-
-	public void setPlayer2AsHuman(){
-		player2 = new HumanPlayer(this);
+	
+	public void setPlayer2(Player p)
+	{
+		player2 = p;
 		gametable.setSecondPlayer(player2);
-		System.out.println("setPlayer2AsHuman");
-	}
-	public void setPlayer2AsRandom(){
-		player2 = new AiRandomPlayer(this);
-		gametable.setSecondPlayer(player2);
-		System.out.println("setPlayer2AsRandom");
-	}
-	public void setPlayer2AsAI(int depth){
-		player2 = new AiHeuristicPlayer(this, depth);
-		gametable.setSecondPlayer(player2);
-		System.out.println("setPlayer2AsAI " + depth);
+		System.out.println(p);
 	}
 
 	public void update(Observable o, Object ob)
