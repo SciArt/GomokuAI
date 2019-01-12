@@ -112,7 +112,7 @@ public class GameController implements Observer
 			gameBoard.addPiece(position, color);
 		}
 
-		if( gametable.getTurnNumber() > 10 ) {
+		if( gametable.getTurnNumber() >= 10 ) {
 			try {
 				FileWriter fileWriter = new FileWriter("experiments_time.txt", true);
 				BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
