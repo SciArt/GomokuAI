@@ -26,13 +26,7 @@ public class Sidebar extends ScrollPane {
         private Text playerText;
         private ChoiceBox<String> choiceBox;
         private Text treeDepthText = new Text(" Tree depth: " + treeDepth);
-        private Text heuristicText = new Text("Heuristic parameters:");
         Slider treeDepthSlider = new Slider();
-        HBox heuristicParams = new HBox();
-        TextField heuristicParam1TextField = new TextField();
-        TextField heuristicParam2TextField = new TextField();
-        TextField heuristicParam3TextField = new TextField();
-        TextField heuristicParam4TextField = new TextField();
 
         Player(String playerName) {
             playerText = new Text(playerName);
@@ -54,14 +48,6 @@ public class Sidebar extends ScrollPane {
             treeDepthSlider.setBlockIncrement(1);
             treeDepthSlider.setSnapToTicks(true);
 
-            heuristicParams.getChildren().addAll(
-                    heuristicParam1TextField,
-                    heuristicParam2TextField,
-                    heuristicParam3TextField,
-                    heuristicParam4TextField
-            );
-            heuristicParams.setSpacing(10);
-
             treeDepthSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
                 if( treeDepth != Math.round(newVal.floatValue()) ) {
                     treeDepth = Math.round(newVal.floatValue());
@@ -76,14 +62,16 @@ public class Sidebar extends ScrollPane {
         }
 
         void changeSetup() {
-            if(choiceBox.getValue().equals("Human")) {
-                setupHuman();
-            }
-            else if(choiceBox.getValue().equals("AI")) {
-                setupAI();
-            }
-            else if (choiceBox.getValue().equals("RandomAI")) {
-                setupRandom();
+            switch (choiceBox.getValue()) {
+                case "Human":
+                    setupHuman();
+                    break;
+                case "AI":
+                    setupAI();
+                    break;
+                case "RandomAI":
+                    setupRandom();
+                    break;
             }
         }
 
@@ -92,21 +80,17 @@ public class Sidebar extends ScrollPane {
                 getChildren().add(treeDepthText);
             if( !getChildren().contains(treeDepthSlider) )
                 getChildren().add(treeDepthSlider);
-            /*if( !getChildren().contains(heuristicText) )
-                getChildren().add(heuristicText);
-            if( !getChildren().contains(heuristicParams) )
-                getChildren().add(heuristicParams);*/
 
             setPlayerTypeAsAI(this, treeDepth);
         }
 
         void setupHuman() {
-            getChildren().removeAll(treeDepthText, treeDepthSlider, heuristicText, heuristicParams);
+            getChildren().removeAll(treeDepthText, treeDepthSlider);
             setPlayerTypeAsHuman(this);
         }
 
         void setupRandom() {
-            getChildren().removeAll(treeDepthText, treeDepthSlider, heuristicText, heuristicParams);
+            getChildren().removeAll(treeDepthText, treeDepthSlider);
             setPlayerTypeAsRandom(this);
         }
     }
@@ -169,7 +153,7 @@ public class Sidebar extends ScrollPane {
         game.setCurrentInfoText(s);
     }
 
-    public void setPlayerTypeAsHuman(Player p) {
+    private void setPlayerTypeAsHuman(Player p) {
         if( p == player1 ) {
             gameController.setPlayer1(new controller.HumanPlayer(gameController));
         }
@@ -178,7 +162,7 @@ public class Sidebar extends ScrollPane {
         }
     }
 
-    public void setPlayerTypeAsAI(Player p, int depth) {
+    private void setPlayerTypeAsAI(Player p, int depth) {
         if( p == player1 ) {
         	gameController.setPlayer1(new controller.AiHeuristicPlayer(gameController, depth));
         }
@@ -187,7 +171,7 @@ public class Sidebar extends ScrollPane {
         }
     }
 
-    public void setPlayerTypeAsRandom(Player p) {
+    private void setPlayerTypeAsRandom(Player p) {
         if( p == player1 ) {
         	gameController.setPlayer1(new controller.AiRandomPlayer(gameController));
         }

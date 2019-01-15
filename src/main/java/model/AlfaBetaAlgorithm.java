@@ -25,24 +25,22 @@ public class AlfaBetaAlgorithm {
 				break;
 			}
 		}
-		//theBestMove = new Board.Position(0, 0);
+
 		this.color = color;
 		int current = 0;
 		int oDepth = originalDepth;
 		for( int i = 0; i <= oDepth; ++i ) {
 			originalDepth = i;
 			current = alfabeta(board, i, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
-			System.out.println("Depth: " + i + " Move: " + theBestMove.x + " " + theBestMove.y + " Current: " + current);
+			//System.out.println("Depth: " + i + " Move: " + theBestMove.x + " " + theBestMove.y + " Current: " + current);
 			if( current == Integer.MAX_VALUE ||  current == -Integer.MAX_VALUE) {
 				//System.out.println("Depth: " + i + " Move: " + theBestMove.x + " " + theBestMove.y);
-				System.out.println("break;");
+				//System.out.println("break;");
 				break;
 			}
 		}
 		originalDepth = oDepth;
 		return current;
-
-		/*return alfabeta(board, originalDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, true);*/
 	}
 	
 	private int alfabeta(Board board, int depth, int alfa, int beta, boolean isPlayer) {

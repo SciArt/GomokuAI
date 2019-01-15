@@ -9,15 +9,13 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 
 public class GameBoard extends GridPane {
-    GameController gameController;
+    private GameController gameController;
 
-    BoardField fields[];
+    private BoardField[] fields;
 
-    public void clickedField(int number){
+    void clickedField(int number){
         System.out.println("Field [" + number%15 + "][" + number/15 + "] is clicked." );
         gameController.saveMove(number);
-        //if( gameController.makeMove(number) );
-        //fields[number].addPiece();
     }
     
     public void addPiece(int number, Piece.PieceType color) {

@@ -10,8 +10,8 @@ import java.util.Random;
 
 public class AiRandomPlayer extends Player {
 
-    GameController gameController;
-    Random r = new Random();
+    private GameController gameController;
+    private Random r = new Random();
 
     public AiRandomPlayer(GameController g){
         this.gameController = g;
@@ -21,8 +21,6 @@ public class AiRandomPlayer extends Player {
         Platform.runLater(() ->gameController.setCurrentPlayer(this, c));
 
         Board.Position pos = new Board.Position(Math.abs(r.nextInt()%15), Math.abs(r.nextInt()%15) );
-
-        System.out.println("Pos = " + pos.x + ", " + pos.y + " Color = " + c + "| AI");
 
         return pos;
     }

@@ -4,10 +4,12 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import model.*;
+import model.Board;
+import model.Gametable;
+import model.Piece;
+import model.Player;
 import view.GameBoard;
 import view.InfoDialog;
 import view.Sidebar;
@@ -17,30 +19,27 @@ import java.io.FileWriter;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Optional;
-import java.util.concurrent.Semaphore;
 
 public class GameController implements Observer
 {
 	private long startTime = 0;
-	int numberOfExperiments = 0;
+	private int numberOfExperiments = 0;
 
-	Semaphore mutexSend = new Semaphore(0);
+	private Sidebar sidebar = new Sidebar(this);
+	private GameBoard gameBoard = new GameBoard(600, 600, this);
 
-	Sidebar sidebar = new Sidebar(this);
-	GameBoard gameBoard = new GameBoard(600, 600, this);
-
-	GametableThread gametableThread;
-	Gametable gametable = new Gametable();
-	Player player1 = new HumanPlayer(this);
-	Player player2 = new HumanPlayer(this);
+	private GametableThread gametableThread;
+	private Gametable gametable = new Gametable();
+	private Player player1 = new HumanPlayer(this);
+	private Player player2 = new HumanPlayer(this);
 
 	private static class Lock
 	{
 		int number;
 	}
-	final Lock currentMove = new Lock();// = 0;
+	private final Lock currentMove = new Lock();// = 0;
 
-	view.Piece.PieceType pieceColor;
+	private view.Piece.PieceType pieceColor;
 
 	public GameController(Stage stage) {
 		final double width = 840;
@@ -221,21 +220,21 @@ public class GameController implements Observer
 				if (winner.color == Piece.Color.White)
 					if (winner.player == player1) {
 						Platform.runLater(() -> sidebar.setCurrentInfoText("Player1 (white) wins!"));
-						Platform.runLater(() -> InfoDialog.showInfoDIalog("End of the game", "Player1 (white) wins!"));
+						Platform.runLater(() -> InfoDialog.show("End of the game", "Player1 (white) wins!"));
 					} else {
 						Platform.runLater(() -> sidebar.setCurrentInfoText("Player2 (white) wins!"));
-						Platform.runLater(() -> InfoDialog.showInfoDIalog("End of the game", "Player2 (white) wins!"));
+						Platform.runLater(() -> InfoDialog.show("End of the game", "Player2 (white) wins!"));
 					}
 				else if (winner.player == player1) {
 					Platform.runLater(() -> sidebar.setCurrentInfoText("Player1 (black) wins!"));
-					Platform.runLater(() -> InfoDialog.showInfoDIalog("End of the game", "Player1 (black) wins!"));
+					Platform.runLater(() -> InfoDialog.show("End of the game", "Player1 (black) wins!"));
 				} else {
 					Platform.runLater(() -> sidebar.setCurrentInfoText("Player2 (black) wins!"));
-					Platform.runLater(() -> InfoDialog.showInfoDIalog("End of the game", "Player2 (black) wins!"));
+					Platform.runLater(() -> InfoDialog.show("End of the game", "Player2 (black) wins!"));
 				}
 			} else {
 				Platform.runLater(() -> sidebar.setCurrentInfoText("Draw!"));
-				Platform.runLater(() -> InfoDialog.showInfoDIalog("End of the game", "Draw!"));
+				Platform.runLater(() -> InfoDialog.show("End of the game", "Draw!"));
 			}
 		}
 	}
@@ -320,6 +319,6 @@ class GametableThread extends Thread {
 
 	public void quit(){
 		System.out.println("Closing thread with gametable...");
-		stop(); // :( Trzeba zrobić interrupt i łapać to w Gametable
+		stop();
 	}
 }

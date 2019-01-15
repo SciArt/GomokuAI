@@ -36,9 +36,6 @@ public class Heuristic2 {
             opponentPoints = Integer.MAX_VALUE;
         }
 
-       /* if( playerPoints >= 700000 && depth == 1)
-            return playerPoints;*/
-
        if( opponentPoints == Integer.MAX_VALUE )
            return -opponentPoints;
         if( playerPoints == Integer.MAX_VALUE )

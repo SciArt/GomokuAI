@@ -8,19 +8,16 @@ import javafx.stage.WindowEvent;
 
 public class Main extends Application {
 
-	GameController gameController;
+	private GameController gameController;
 
 	@Override
 	public void start(Stage primaryStage) {
 
 		gameController = new GameController(primaryStage);
 
-		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-			@Override
-			public void handle(WindowEvent event) {
-				event.consume();
-				gameController.closeApp();
-			}
+		primaryStage.setOnCloseRequest(event -> {
+			event.consume();
+			gameController.closeApp();
 		});
 
 		primaryStage.setFullScreenExitHint("");

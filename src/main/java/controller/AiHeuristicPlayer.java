@@ -1,17 +1,14 @@
 package controller;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 import javafx.application.Platform;
 import model.*;
 
+import java.util.ArrayList;
+
 public class AiHeuristicPlayer extends Player {
 
-    GameController gameController;
-    Random r = new Random();
-    AlfaBetaAlgorithm alfabeta;
-    //Piece.Color color;
+    private GameController gameController;
+    private AlfaBetaAlgorithm alfabeta;
 
     public AiHeuristicPlayer(GameController g, int depth){
         this.gameController = g;
@@ -21,12 +18,9 @@ public class AiHeuristicPlayer extends Player {
     public Board.Position makeMove(Board b, model.Piece.Color c) {
         Platform.runLater(() ->gameController.setCurrentPlayer(this, c));
 
-        int h = alfabeta.minimaxAlfabeta(b, c);
-        Board.Position pos = alfabeta.getTheBestMove();
-        
-        System.out.println("Pos = " + pos.x + ", " + pos.y + " Color = " + c + "| AI Heuristic h=" + h + "\n");
+        alfabeta.minimaxAlfabeta(b, c);
 
-        return pos;
+        return alfabeta.getTheBestMove();
     }
 
     public Board.Move makeMove(Board b, int black_count, int white_count) {
@@ -47,8 +41,6 @@ public class AiHeuristicPlayer extends Player {
     }
 
     public boolean doPickColor(Board b) {
-        //int hBlack = alfabeta.minimaxAlfabeta(b, Piece.Color.Black);
-        //int hWhite = alfabeta.minimaxAlfabeta(b, Piece.Color.White);
         alfabeta.minimaxAlfabeta(b, Piece.Color.White);
         b.placePiece(alfabeta.getTheBestMove().x,alfabeta.getTheBestMove().y,new Piece(Piece.Color.White));
 
@@ -56,42 +48,19 @@ public class AiHeuristicPlayer extends Player {
         int hBlack = h.getPoints(b, Piece.Color.Black);
         int hWhite = h.getPoints(b, Piece.Color.White);
 
-        System.out.println("doPickColor: (" + hBlack + " - " + hWhite + " != 0) == " + (hBlack - hWhite != 0) + "\n");
-
         return (hBlack - hWhite != 0);
-
-        //return r.nextBoolean();
     }
-    /*
-    public Piece.Color pickColor(Board b) {
-
-        if( r.nextBoolean() )
-            color = Piece.Color.White;
-        else
-        	color = Piece.Color.Black;
-        	
-        return color;
-    }*/
     
     public Piece.Color pickColor(Board b) {
-        //Heuristic2 h = new Heuristic2();
-
         alfabeta.minimaxAlfabeta(b, Piece.Color.White);
         b.placePiece(alfabeta.getTheBestMove().x,alfabeta.getTheBestMove().y,new Piece(Piece.Color.White));
 
         if( alfabeta.minimaxAlfabeta(b, Piece.Color.White) > alfabeta.minimaxAlfabeta(b, Piece.Color.Black) ) {
-            System.out.println("pickColor: Piece.Color.White\n");
             return Piece.Color.White;
         }
         else {
-            System.out.println("pickColor: Piece.Color.Black\n");
             return Piece.Color.Black;
         }
-
-        /*if( r.nextBoolean() )
-            return Piece.Color.White;
-        else
-            return Piece.Color.Black;*/
     }
     
     public void setDepth(int newDepth) {

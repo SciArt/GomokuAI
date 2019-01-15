@@ -26,10 +26,8 @@ class BoardField extends StackPane {
 
         smallDotImage = new ImageView(new Image("small-dot.png"));
 
-        //setOnMouseClicked(e -> AddPiece());
-
         setOnMouseClicked( e-> {
-            if( !getChildren().contains(piece) ) // Potem można zdjąć tego IF'a, na razie gametable nie jest podpięty
+            if( !getChildren().contains(piece) )
                 gameBoard.clickedField(number);
         });
 
@@ -50,21 +48,10 @@ class BoardField extends StackPane {
         piece = null;
     }
 
-    public void addPiece( Piece.PieceType color ){
-    	
+    public void addPiece( Piece.PieceType color ) {
         count += 1;
         piece = new Piece(color, count);
         Platform.runLater(() -> getChildren().add(piece));
-        //Platform.runLater( getChildren().add(piece) );
-
-    	/*if(!getChildren().contains(piece)){
-            count += 1;
-            if(count%2 == 0)
-                piece = new Piece(Piece.PieceType.BLACK, count);
-            else
-                piece = new Piece(Piece.PieceType.WHITE, count);
-            getChildren().add(piece);
-        }*/
     }
     
     public Piece getPiece(){
