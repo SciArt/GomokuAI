@@ -22,7 +22,7 @@ import java.util.Optional;
 
 public class GameController implements Observer
 {
-	private long startTime = 0;
+	/*private long startTime = 0;*/
 	private int numberOfExperiments = 0;
 
 	private Sidebar sidebar = new Sidebar(this);
@@ -38,8 +38,6 @@ public class GameController implements Observer
 		int number;
 	}
 	private final Lock currentMove = new Lock();// = 0;
-
-	private view.Piece.PieceType pieceColor;
 
 	public GameController(Stage stage) {
 		final double width = 840;
@@ -87,17 +85,10 @@ public class GameController implements Observer
 			gametable.setSecondPlayer(player2);
 		}
 
-		long elapsedTime = System.currentTimeMillis() - startTime;
-		startTime = System.currentTimeMillis();
+		/*long elapsedTime = System.currentTimeMillis() - startTime;
+		startTime = System.currentTimeMillis();*/
 
 		model.Board board = gametable.getBoard();
-
-		/*Heuristic2 h = new Heuristic2();
-		int points;
-		if( gametable.getCurrentPlayerSlot().color == Piece.Color.Black )
-			points = h.getPoints(board, Piece.Color.White);
-		else
-			points = h.getPoints(board, Piece.Color.Black);*/
 
 		for(int i=0; i<board.size(); ++i)
 		for(int j=0; j<board.size(); ++j)
@@ -111,39 +102,41 @@ public class GameController implements Observer
 			gameBoard.addPiece(position, color);
 		}
 
-		if( gametable.getTurnNumber() >= 10 ) {
+		/*if( gametable.getTurnNumber() >= 10 ) {
 			try {
 				FileWriter fileWriter = new FileWriter("experiments_time.txt", true);
 				BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 				bufferedWriter.write(elapsedTime+"\n");
 				bufferedWriter.close();
-				/*fileWriter = new FileWriter("experiments_heuristic.txt", true);
-				bufferedWriter = new BufferedWriter(fileWriter);
-				bufferedWriter.write(points+"\n");
-				bufferedWriter.close();*/
 			}
 			catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
+		}*/
+
+		Platform.runLater(() -> sidebar.setCurrentInfoText(gametable.getCurrentPlayerSlot().toString()));
 	}
 
+	// To można uprościć z toString
 	void setCurrentPlayer(Player p, Piece.Color c){
-		String color;
-		if( c == c.White ) {
+
+		if( c != null )
+			sidebar.setCurrentInfoText(p.toString() + "'s turn - " + c.toString());
+		else
+			sidebar.setCurrentInfoText(p.toString() + "'s turn");
+
+		/*String color;
+		if( c == Piece.Color.White)
 			color = "white";
-			pieceColor = view.Piece.PieceType.WHITE;
-		}
-		else {
+		else
 			color = "black";
-			pieceColor = view.Piece.PieceType.BLACK;
-		}
 
 		if( p.equals(player1) )
 			sidebar.setCurrentInfoText("Player1's turn - " + color);
 		else
-			sidebar.setCurrentInfoText("Player2's turn - " + color);
+			sidebar.setCurrentInfoText("Player2's turn - " + color);*/
 	}
+
 
 	public void startGame(){
 		numberOfExperiments = 0;
@@ -157,6 +150,7 @@ public class GameController implements Observer
 		gametableThread.start();
 	}
 
+	// To jest bardzo podobne do startGame(), no ale nie wiem
 	public void startExperiments(){
 		if( numberOfExperiments == 0 )
 			numberOfExperiments = 10;
@@ -171,13 +165,43 @@ public class GameController implements Observer
 
 		gametableThread = new GametableThread(gametable, this);
 
-		startTime = System.currentTimeMillis();
+		/*startTime = System.currentTimeMillis();*/
 		gametableThread.start();
 	}
 
+	// To można uprościć
 	void stopGame( Gametable.PlayerSlot winner ){
-		System.out.println("Winner " + winner);
+		String infoText;
+		if (winner != null) {
+			infoText = winner.toString() + " wins!";
+		} else {
+			infoText = "Draw!";
+		}
+
+		Platform.runLater(() -> sidebar.setCurrentInfoText(infoText));
+
 		if( numberOfExperiments > 0 ) {
+			try {
+				FileWriter fileWriter = new FileWriter("experiments.txt", true);
+				BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+				bufferedWriter.write(infoText + "\n");
+
+				numberOfExperiments--;
+				if( numberOfExperiments > 0 ) {
+					Platform.runLater(this::startExperiments);
+				}
+
+				bufferedWriter.close();
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else
+			Platform.runLater(() -> InfoDialog.show("End of the game", infoText));
+
+		/*if( numberOfExperiments > 0 ) {
 			try {
 				FileWriter fileWriter = new FileWriter("experiments.txt", true);
 				BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
@@ -236,7 +260,7 @@ public class GameController implements Observer
 				Platform.runLater(() -> sidebar.setCurrentInfoText("Draw!"));
 				Platform.runLater(() -> InfoDialog.show("End of the game", "Draw!"));
 			}
-		}
+		}*/
 	}
 
 	public void forceStopGame(){
@@ -263,7 +287,7 @@ public class GameController implements Observer
 		Platform.exit();
 	}
 
-	public Board.Position makeMove(){
+	Board.Position makeMove(){
 		synchronized(currentMove) {
 			try {
 				currentMove.wait();
@@ -271,9 +295,6 @@ public class GameController implements Observer
 				e.printStackTrace();
 			}
 		}
-
-		// Tymczasowo, bo jeszcze nie ma obserwatora
-		//gameBoard.addPiece(currentMove.number, pieceColor);
 
 		return new Board.Position(currentMove.number%15,currentMove.number/15);
 	}

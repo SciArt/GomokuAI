@@ -52,7 +52,12 @@ public class Gametable extends Observable
 	{
 		return second.player;
 	}
-	
+
+	public PlayerSlot getCurrentPlayerSlot()
+	{
+		return current;
+	}
+
 	public Board getBoard()
 	{
 		return new Board(board);

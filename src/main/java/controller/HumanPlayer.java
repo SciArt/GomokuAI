@@ -23,7 +23,7 @@ public class HumanPlayer extends Player {
 	}
 
     public Board.Position makeMove(Board b, model.Piece.Color c) {
-        Platform.runLater(() ->gameController.setCurrentPlayer(this, c));
+        //Platform.runLater(() ->gameController.setCurrentPlayer(this, c));
 
         return gameController.makeMove();
     }
@@ -33,12 +33,12 @@ public class HumanPlayer extends Player {
         ArrayList<Board.Position> black = new ArrayList<>();
         ArrayList<Board.Position> white = new ArrayList<>();
 
-        Platform.runLater(() ->gameController.setCurrentPlayer(this, Piece.Color.Black));
+        //Platform.runLater(() ->gameController.setCurrentPlayer(this, Piece.Color.Black));
         for(int i = 0; i < black_count; ++i) {
         	black.add(gameController.makeMove());
         }
 
-        Platform.runLater(() -> gameController.setCurrentPlayer(this, Piece.Color.White));
+        //Platform.runLater(() -> gameController.setCurrentPlayer(this, Piece.Color.White));
         for(int i = 0; i < white_count; ++i) {
         	white.add(gameController.makeMove());
         }
@@ -48,6 +48,7 @@ public class HumanPlayer extends Player {
 
     public boolean doPickColor(Board b) {
 
+        //Platform.runLater(() -> gameController.setCurrentPlayer(this, null));
         FutureTask<Optional<ButtonType>> futureTask = new FutureTask(
                 new pickColorPrompt1()
         );
@@ -64,6 +65,7 @@ public class HumanPlayer extends Player {
 
     public Piece.Color pickColor(Board b) {
 
+        //Platform.runLater(() -> gameController.setCurrentPlayer(this, null));
         FutureTask<Piece.Color> futureTask = new FutureTask(
                 new pickColorPrompt2()
         );

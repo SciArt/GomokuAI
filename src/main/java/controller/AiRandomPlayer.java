@@ -18,7 +18,7 @@ public class AiRandomPlayer extends Player {
     }
 
     public Board.Position makeMove(Board b, model.Piece.Color c) {
-        Platform.runLater(() ->gameController.setCurrentPlayer(this, c));
+        //Platform.runLater(() ->gameController.setCurrentPlayer(this, c));
 
         Board.Position pos = new Board.Position(Math.abs(r.nextInt()%15), Math.abs(r.nextInt()%15) );
 
@@ -34,7 +34,7 @@ public class AiRandomPlayer extends Player {
             black.add(makeMove(b, Piece.Color.Black));
         }
 
-        Platform.runLater(() -> gameController.setCurrentPlayer(this, Piece.Color.White));
+        //Platform.runLater(() -> gameController.setCurrentPlayer(this, Piece.Color.White));
         for(int i = 0; i < white_count; ++i) {
             white.add(makeMove(b, Piece.Color.White));
         }

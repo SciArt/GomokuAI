@@ -16,7 +16,7 @@ public class AiHeuristicPlayer extends Player {
     }
 
     public Board.Position makeMove(Board b, model.Piece.Color c) {
-        Platform.runLater(() ->gameController.setCurrentPlayer(this, c));
+        //Platform.runLater(() ->gameController.setCurrentPlayer(this, c));
 
         alfabeta.minimaxAlfabeta(b, c);
 
@@ -32,7 +32,7 @@ public class AiHeuristicPlayer extends Player {
             black.add(makeMove(b, Piece.Color.Black));
         }
 
-        Platform.runLater(() -> gameController.setCurrentPlayer(this, Piece.Color.White));
+        //Platform.runLater(() -> gameController.setCurrentPlayer(this, Piece.Color.White));
         for(int i = 0; i < white_count; ++i) {
             white.add(makeMove(b, Piece.Color.White));
         }
@@ -41,6 +41,7 @@ public class AiHeuristicPlayer extends Player {
     }
 
     public boolean doPickColor(Board b) {
+        //Platform.runLater(() -> gameController.setCurrentPlayer(this, null));
         alfabeta.minimaxAlfabeta(b, Piece.Color.White);
         b.placePiece(alfabeta.getTheBestMove().x,alfabeta.getTheBestMove().y,new Piece(Piece.Color.White));
 
@@ -52,6 +53,7 @@ public class AiHeuristicPlayer extends Player {
     }
     
     public Piece.Color pickColor(Board b) {
+        //Platform.runLater(() -> gameController.setCurrentPlayer(this, null));
         alfabeta.minimaxAlfabeta(b, Piece.Color.White);
         b.placePiece(alfabeta.getTheBestMove().x,alfabeta.getTheBestMove().y,new Piece(Piece.Color.White));
 
