@@ -29,7 +29,8 @@ public class Gametable extends Observable
 		
 		public String toString()
 		{
-			return name + " (" + color + ")";
+			if(color == null) return name;
+			else return name + " (" + color + ")";
 		}
 	}
 	private PlayerSlot first = new PlayerSlot(), second = new PlayerSlot();
