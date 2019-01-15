@@ -52,12 +52,12 @@ public class Gametable extends Observable
 	{
 		return second.player;
 	}
-
+	
 	public PlayerSlot getCurrentPlayerSlot()
 	{
 		return current;
 	}
-
+	
 	public Board getBoard()
 	{
 		return new Board(board);
@@ -96,18 +96,31 @@ public class Gametable extends Observable
 		second.color = null;
 		current = first;
 		turn = 0;
-	}
-	
-	private void endTurn()
-	{
-		++turn;
-		
-		if(current == first) current = second;
-		else if(current == second) current = first;
 		
 		this.setChanged();
 		this.notifyObservers();
 		this.clearChanged();
+	}
+	
+	private void endMove()
+	{
+		++turn;
+		
+		this.setChanged();
+		this.notifyObservers();
+		this.clearChanged();
+	}
+	
+	private void switchCurrent()
+	{
+		if(current == first) current = second;
+		else if(current == second) current = first;
+	}
+	
+	private void endTurn()
+	{
+		this.switchCurrent();
+		this.endMove();
 	}
 	
 	private boolean move(Board.Move move, int black_count, int white_count)
@@ -126,15 +139,16 @@ public class Gametable extends Observable
 		
 		return true;
 	}
-	
-	private boolean move(Board.Position pos, Piece.Color c)
+		
+	private boolean move(Board.Position pos, Piece.Color c, boolean end_turn)
 	{
 		if(!board.isValidPosition(pos)) return false;
 		if(board.getPiece(pos) != null) return false;
 		
 		board.placePiece(pos.x, pos.y, new Piece(c));
 		
-		this.endTurn();
+		if(end_turn) this.endTurn();
+		else this.endMove();
 		
 		return true;
 	}
@@ -185,15 +199,21 @@ public class Gametable extends Observable
 		
 		for(; black_count > 0; --black_count)
 			do pos = player.makeMove(this.getBoard(), Piece.Color.Black);
-			while( !move(pos, Piece.Color.Black));
+			while( !move(pos, Piece.Color.Black, false));
 		
 		for(; white_count > 0; --white_count)
 			do pos = player.makeMove(this.getBoard(), Piece.Color.White);
-			while( !move(pos, Piece.Color.White));
+			while( !move(pos, Piece.Color.White, false));
+		
+		this.switchCurrent();
 	}
 	
 	private PlayerSlot regularGame()
 	{
+		this.setChanged();
+		this.notifyObservers();
+		this.clearChanged();
+		
 		Board.Position pos;
 		
 		current = (first.color == Piece.Color.White) ? first : second;
@@ -203,14 +223,14 @@ public class Gametable extends Observable
 			if(isDraw()) return null;
 			
 			do pos = current.player.makeMove(this.getBoard(), current.color);
-			while( !move(pos, current.color) );
+			while( !move(pos, current.color, true) );
 			
 		}
 		while(!didConclude(pos));
 		
 		return (current == first) ? second : first;
 	}
-	
+	/*
 	private PlayerSlot openingGame()
 	{
 		Board.Move pos;
@@ -234,7 +254,7 @@ public class Gametable extends Observable
 		second.color = (first.color == Piece.Color.Black) ? Piece.Color.White : Piece.Color.Black;
 		
 		return this.regularGame();
-	}
+	}*/
 	
 	private PlayerSlot openingGameB()
 	{
