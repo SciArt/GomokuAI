@@ -8,7 +8,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import model.Board;
 import model.Gametable;
-import model.Piece;
 import model.Player;
 import view.GameBoard;
 import view.InfoDialog;
@@ -22,7 +21,6 @@ import java.util.Optional;
 
 public class GameController implements Observer
 {
-	/*private long startTime = 0;*/
 	private int numberOfExperiments = 0;
 
 	private Sidebar sidebar = new Sidebar(this);
@@ -85,9 +83,6 @@ public class GameController implements Observer
 			gametable.setSecondPlayer(player2);
 		}
 
-		/*long elapsedTime = System.currentTimeMillis() - startTime;
-		startTime = System.currentTimeMillis();*/
-
 		model.Board board = gametable.getBoard();
 
 		for(int i=0; i<board.size(); ++i)
@@ -102,45 +97,10 @@ public class GameController implements Observer
 			gameBoard.addPiece(position, color);
 		}
 
-		/*if( gametable.getTurnNumber() >= 10 ) {
-			try {
-				FileWriter fileWriter = new FileWriter("experiments_time.txt", true);
-				BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-				bufferedWriter.write(elapsedTime+"\n");
-				bufferedWriter.close();
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
-		}*/
-
 		Platform.runLater(() -> sidebar.setCurrentInfoText(gametable.getCurrentPlayerSlot().toString()));
 	}
 
-	// To można uprościć z toString
-	void setCurrentPlayer(Player p, Piece.Color c){
-
-		if( c != null )
-			sidebar.setCurrentInfoText(p.toString() + "'s turn - " + c.toString());
-		else
-			sidebar.setCurrentInfoText(p.toString() + "'s turn");
-
-		/*String color;
-		if( c == Piece.Color.White)
-			color = "white";
-		else
-			color = "black";
-
-		if( p.equals(player1) )
-			sidebar.setCurrentInfoText("Player1's turn - " + color);
-		else
-			sidebar.setCurrentInfoText("Player2's turn - " + color);*/
-	}
-
-
 	public void startGame(){
-		numberOfExperiments = 0;
-
 		sidebar.setCurrentInfoText("Game is starting...");
 		if( gametableThread != null )
 			gametableThread.quit();
@@ -150,7 +110,6 @@ public class GameController implements Observer
 		gametableThread.start();
 	}
 
-	// To jest bardzo podobne do startGame(), no ale nie wiem
 	public void startExperiments(){
 		if( numberOfExperiments == 0 )
 			numberOfExperiments = 10;
@@ -158,18 +117,9 @@ public class GameController implements Observer
 		gametable.setFirstPlayer(new AiRandomPlayer(this));
 		gametable.setSecondPlayer(new AiRandomPlayer(this));
 
-		sidebar.setCurrentInfoText("Experiments are starting...");
-		if( gametableThread != null )
-			gametableThread.quit();
-		gameBoard.cleanBoard();
-
-		gametableThread = new GametableThread(gametable, this);
-
-		/*startTime = System.currentTimeMillis();*/
-		gametableThread.start();
+		startGame();
 	}
-
-	// To można uprościć
+	
 	void stopGame( Gametable.PlayerSlot winner ){
 		String infoText;
 		if (winner != null) {
@@ -200,70 +150,11 @@ public class GameController implements Observer
 		}
 		else
 			Platform.runLater(() -> InfoDialog.show("End of the game", infoText));
-
-		/*if( numberOfExperiments > 0 ) {
-			try {
-				FileWriter fileWriter = new FileWriter("experiments.txt", true);
-				BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-
-				if (winner != null) {
-					if (winner.color == Piece.Color.White)
-						if (winner.player == player1) {
-							Platform.runLater(() -> sidebar.setCurrentInfoText("Player1 (white) wins!"));
-							bufferedWriter.write("Player1\n");
-						} else {
-							Platform.runLater(() -> sidebar.setCurrentInfoText("Player2 (white) wins!"));
-							bufferedWriter.write("Player2\n");
-						}
-					else if (winner.player == player1) {
-						Platform.runLater(() -> sidebar.setCurrentInfoText("Player1 (black) wins!"));
-						bufferedWriter.write("Player1\n");
-					} else {
-						Platform.runLater(() -> sidebar.setCurrentInfoText("Player2 (black) wins!"));
-						bufferedWriter.write("Player2\n");
-					}
-				}
-				else {
-					Platform.runLater(() -> sidebar.setCurrentInfoText("Draw!"));
-					bufferedWriter.write("Draw\n");
-				}
-
-				numberOfExperiments--;
-				if( numberOfExperiments > 0 ) {
-					Platform.runLater(this::startExperiments);
-				}
-
-				bufferedWriter.close();
-			}
-			catch(Exception e) {
-				e.printStackTrace();
-			}
-		}
-		else {
-			if (winner != null) {
-				if (winner.color == Piece.Color.White)
-					if (winner.player == player1) {
-						Platform.runLater(() -> sidebar.setCurrentInfoText("Player1 (white) wins!"));
-						Platform.runLater(() -> InfoDialog.show("End of the game", "Player1 (white) wins!"));
-					} else {
-						Platform.runLater(() -> sidebar.setCurrentInfoText("Player2 (white) wins!"));
-						Platform.runLater(() -> InfoDialog.show("End of the game", "Player2 (white) wins!"));
-					}
-				else if (winner.player == player1) {
-					Platform.runLater(() -> sidebar.setCurrentInfoText("Player1 (black) wins!"));
-					Platform.runLater(() -> InfoDialog.show("End of the game", "Player1 (black) wins!"));
-				} else {
-					Platform.runLater(() -> sidebar.setCurrentInfoText("Player2 (black) wins!"));
-					Platform.runLater(() -> InfoDialog.show("End of the game", "Player2 (black) wins!"));
-				}
-			} else {
-				Platform.runLater(() -> sidebar.setCurrentInfoText("Draw!"));
-				Platform.runLater(() -> InfoDialog.show("End of the game", "Draw!"));
-			}
-		}*/
 	}
 
 	public void forceStopGame(){
+		numberOfExperiments = 0;
+
 		sidebar.setCurrentInfoText("Game is not running...");
 		if( gametableThread != null )
 			gametableThread.quit();
