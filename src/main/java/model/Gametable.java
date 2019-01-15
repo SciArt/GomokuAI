@@ -117,6 +117,15 @@ public class Gametable extends Observable
 		else if(current == second) current = first;
 	}
 	
+	private void setCurrentColor(Piece.Color color)
+	{
+		current.color = color;
+		
+		this.setChanged();
+		this.notifyObservers();
+		this.clearChanged();
+	}
+	
 	private void endTurn()
 	{
 		this.switchCurrent();
@@ -193,18 +202,22 @@ public class Gametable extends Observable
 		return false;
 	}
 	//quick fix
-	private void requestMove(Player player, int black_count, int white_count)
+	private void requestMove(int black_count, int white_count)
 	{
 		Board.Position pos;
+		Piece.Color temp = current.color;
 		
+		this.setCurrentColor(Piece.Color.Black);
 		for(; black_count > 0; --black_count)
-			do pos = player.makeMove(this.getBoard(), Piece.Color.Black);
+			do pos = current.player.makeMove(this.getBoard(), Piece.Color.Black);
 			while( !move(pos, Piece.Color.Black, false));
 		
+		this.setCurrentColor(Piece.Color.White);
 		for(; white_count > 0; --white_count)
-			do pos = player.makeMove(this.getBoard(), Piece.Color.White);
+			do pos = current.player.makeMove(this.getBoard(), Piece.Color.White);
 			while( !move(pos, Piece.Color.White, false));
 		
+		this.setCurrentColor(temp);
 		this.switchCurrent();
 	}
 	
@@ -260,7 +273,7 @@ public class Gametable extends Observable
 	{
 		Board.Position pos;
 		
-		this.requestMove(first.player, 2, 1);
+		this.requestMove(2, 1);
 		
 		if(second.player.doPickColor(this.getBoard()))
 		{
@@ -271,7 +284,7 @@ public class Gametable extends Observable
 			return this.regularGame();
 		}
 		
-		this.requestMove(second.player, 1, 1);
+		this.requestMove(1, 1);
 		
 		do first.color = first.player.pickColor(this.getBoard());
 		while(first.color == null);
