@@ -119,7 +119,7 @@ public class GameController implements Observer
 
 		startGame();
 	}
-	
+
 	void stopGame( Gametable.PlayerSlot winner ){
 		String infoText;
 		if (winner != null) {
@@ -203,30 +203,13 @@ class GametableThread extends Thread {
 	private Gametable gametable;
 	private GameController gameController;
 
-	private Gametable.PlayerSlot winner;
-	private boolean running = false;
-
 	GametableThread(Gametable gametable, GameController gameController) {
 		this.gametable = gametable;
 		this.gameController = gameController;
 	}
 
 	public void run(){
-		running = true;
-		winner = gametable.startGame();
-		running = false;
-		gameController.stopGame( winner );
-	}
-
-	public boolean isRunning(){
-		return running;
-	}
-
-	Gametable.PlayerSlot getWinner(){
-		if( !isRunning() )
-			return winner;
-		else
-			return null;
+		gameController.stopGame( gametable.startGame() );
 	}
 
 	public void quit(){
