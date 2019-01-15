@@ -8,6 +8,7 @@ public class Gametable extends Observable
 	
 	public class PlayerSlot
 	{
+		public String name;
 		public Player player;
 		public Piece.Color color;
 
@@ -23,12 +24,24 @@ public class Gametable extends Observable
 		PlayerSlot(PlayerSlot ps) {
 			player = ps.player;
 			color = ps.color;
+			name = ps.name;
+		}
+		
+		public String toString()
+		{
+			return name + " (" + color + ")";
 		}
 	}
 	private PlayerSlot first = new PlayerSlot(), second = new PlayerSlot();
 	private PlayerSlot current;
 	
 	private int turn;
+	
+	public Gametable()
+	{
+		first.name = "Player 1";
+		second.name = "Player 2";
+	}
 	
 	public Player getFirstPlayer() 
 	{
@@ -253,22 +266,4 @@ public class Gametable extends Observable
 		else
 			return new PlayerSlot(winner);
 	}
-	
-	/*public static void main(String[] args)
-	{
-		Gametable g = new Gametable();
-		
-		ArrayList<Board.Position> black = new ArrayList<Board.Position>(), white = new ArrayList<Board.Position>();
-		
-		white.add(new Board.Position(1, 1));
-		white.add(new Board.Position(2, 2));
-		white.add(new Board.Position(3, 3));
-		white.add(new Board.Position(4, 4));
-		white.add(new Board.Position(5, 5));
-		
-		Board.Move move = new Board.Move(black, white);
-		g.move(move, 0, 5);
-		
-		System.out.println(g.didConclude(new Board.Position(3,3)));
-	}*/
 }
