@@ -5,12 +5,10 @@ public class Heuristic {
     private int playerPoints;
     private int opponentPoints;
 
-    private boolean wins = false;
-    /*private boolean playerWins = false;
-    private boolean opponentLoose = false;*/
-
     private int base = 10;
 
+    private boolean wins = false;
+    
     public Heuristic() {
         playerPoints = 0;
         opponentPoints = 0;
@@ -47,10 +45,11 @@ public class Heuristic {
     public int getContestantPoints (Board board, Piece.Color color) {
         int pointSum = 0;
         for(int i=0;i<board.size();i++)
-            pointSum += checkRow(i, board, color);
+        	pointSum += checkRow(i, board, color);
 
         for(int i=0;i<board.size();i++)
-            pointSum += checkColumn(i, board, color);
+        	pointSum += checkColumn(i, board, color);
+            
 
         pointSum += checkCantLeftToRight(0, 0, board, color);
         for(int i=1;i<board.size();i++) {
@@ -68,242 +67,219 @@ public class Heuristic {
     }
 
     public int checkRow(int numberOfRow, Board board, Piece.Color color) {
-        int pointSum = 0;
-        int whichInLine = 0;
-        int emptyCurrent = 0;
-        int emptyBefore = 0;
-        for(int i=0;i<board.size();i++) {
-            // Na polu znajduje się już jakiś kamyk
-            if (board.getPiece(i, numberOfRow) != null) {
-                // Przerwany został szereg pustych pól, więc zapisujemy ile było pustych i zerujemy
-                // NIE uwzględnia to, że pomiedzy naszymi kamykami może być wiele przerw
-                if( emptyCurrent != 0 ) {
-                    emptyBefore = emptyCurrent;
-                    emptyCurrent = 0;
-
-                    if( whichInLine > 0 && whichInLine <= 5 && (emptyBefore+whichInLine >= 5 || board.getPiece(i, numberOfRow).getColor() == color) ) {
-                        pointSum += (int) Math.pow(base, whichInLine);
-                        if( whichInLine == 5 ) {
-                            wins = true;
-                        }
-                    }
-                    whichInLine = 0;
-                }
-
-                // Nasz kolor
-                if (board.getPiece(i, numberOfRow).getColor() == color) {
-                    whichInLine++;
-                }
-
-                // Kolor przeciwnika, trzeba wyzerować wszystko i ewentualnie przypisać punkty
-                else {
-                    // emptyCurrent == 0, dlatego nie sprawdzam
-                    if( whichInLine > 0 && whichInLine <= 5 && emptyBefore+whichInLine >= 5) {
-                        pointSum += (int) Math.pow(base, whichInLine);
-                        if( whichInLine == 5 ) {
-                            wins = true;
-                        }
-                    }
-                    whichInLine = 0;
-                    emptyBefore = 0;
-                }
-            }
-            // Pole jest puste
-            else {
-                emptyCurrent++;
-            }
-        }
-
-        if( whichInLine > 0 && whichInLine <= 5 && emptyCurrent+emptyBefore+whichInLine >= 5 ) {
-            pointSum += (int) Math.pow(base, whichInLine);
-            emptyCurrent = 0;
-            if( whichInLine == 5 ) {
-                wins = true;
-            }
-        }
-
-        return pointSum;
+    	int pointSum = 0;
+    	//dzialanie opiera sie na sprawdzaniu kolejnych sekwencji po 5 pol,ale w 1 iteracji
+    	//przy czym kazda zaczyna sie zaraz za poprzednia, dlatego potrzeba pamietac informacje
+    	//o 5 takich sekwencjach za pomoca 10 liczb - po 2 na sekwencje
+    	
+    	int howManyEmpty[] = {0, 0, 0, 0, 0};//trzyma informacje o liczbie pustych pol, przy czym puste sa tez te zajmowane przez gracza
+											//chodzi o to zeby mozna bylo ulozyc sekwencje 5 pionkow
+    	int howManyElements[] = {0, 0, 0, 0, 0};//trzyma informacje o liczbie pionkow gracza w sekwencji
+    	
+    	for(int i=0;i<board.size();i++) {
+    		//podliczanie sekwencji, ktora osiagnela 5 pol
+    		//jesli wszystkie 5 pol jest zajetych to od razu gracz wygrywa
+    		if (howManyElements[i%5] == 5) {
+    			wins = true;
+    			return 0;
+    		}
+    		//punkty dodajemy tylko jesli istnieje mozliwosc zajecia wszystkich pol przez gracza
+    		if (howManyEmpty[i%5] == 5)
+    			pointSum += (int) Math.pow(base, howManyElements[i%5]);
+    		
+    		//zerowanie podliczonej sekwencji
+    		howManyEmpty[i%5] = 0;
+    		howManyElements[i%5] = 0;
+    		
+    		//pole puste - zwiekszamy wszystkim sekwencjom informacje o pustym polu
+    		if (board.getPiece(i, numberOfRow) == null) {
+    			howManyEmpty[0]++;
+    			howManyEmpty[1]++;
+    			howManyEmpty[2]++;
+    			howManyEmpty[3]++;
+    			howManyEmpty[4]++;
+    		}
+    		else {
+	    		//nasz kolor - zwiekszamy informacje o ilosci pustych i pionkow gracza
+	    		if (board.getPiece(i, numberOfRow).getColor() == color) {
+	    			howManyEmpty[0]++; howManyElements[0]++;
+	    			howManyEmpty[1]++; howManyElements[1]++;
+	    			howManyEmpty[2]++; howManyElements[2]++;
+	    			howManyEmpty[3]++; howManyElements[3]++;
+	    			howManyEmpty[4]++; howManyElements[4]++;
+	            }
+	    		//kolor przeciwnika - nie robimy nic
+    		}
+    	}
+    	
+    	return pointSum;
     }
 
 
     public int checkColumn(int numberOfColumn, Board board, Piece.Color color) {
-        int pointSum = 0;
-        int whichInLine = 0;
-        int emptyCurrent = 0;
-        int emptyBefore = 0;
-        for(int i=0;i<board.size();i++) {
-            if (board.getPiece(numberOfColumn, i) != null) {
-                // Przerwany został szereg pustych pól, więc zapisujemy ile było pustych i zerujemy
-                // NIE uwzględnia to, że pomiedzy naszymi kamykami może być wiele przerw
-                if( emptyCurrent != 0 ) {
-                    emptyBefore = emptyCurrent;
-                    emptyCurrent = 0;
-
-                    if( whichInLine > 0 && whichInLine <= 5 && (emptyBefore+whichInLine >= 5 || board.getPiece(numberOfColumn,i).getColor() == color) ) {
-                        pointSum += (int) Math.pow(base, whichInLine);
-                        if( whichInLine == 5 ) {
-                            wins = true;
-                        }
-                    }
-                    whichInLine = 0;
-                }
-
-                // Nasz kolor
-                if (board.getPiece(numberOfColumn, i).getColor() == color) {
-                    whichInLine++;
-                }
-
-                // Kolor przeciwnika, trzeba wyzerować wszystko i ewentualnie przypisać punkty
-                else {
-                    // emptyCurrent == 0, dlatego nie sprawdzam
-                    if( whichInLine > 0 && whichInLine <= 5 && emptyBefore+whichInLine >= 5) {
-                        pointSum += (int) Math.pow(base, whichInLine);
-                        if( whichInLine == 5 ) {
-                            wins = true;
-                        }
-                    }
-                    whichInLine = 0;
-                    emptyBefore = 0;
-                }
-            }
-            // Pole jest puste
-            else {
-                emptyCurrent++;
-            }
-        }
-
-        if( whichInLine > 0 && whichInLine <= 5 && emptyCurrent+emptyBefore+whichInLine >= 5 ) {
-            pointSum += (int) Math.pow(base, whichInLine);
-            emptyCurrent = 0;
-            if( whichInLine == 5 ) {
-                wins = true;
-            }
-        }
-
-        return pointSum;
+    	int pointSum = 0;
+    	//dzialanie opiera sie na sprawdzaniu kolejnych sekwencji po 5 pol,ale w 1 iteracji
+    	//przy czym kazda zaczyna sie zaraz za poprzednia, dlatego potrzeba pamietac informacje
+    	//o 5 takich sekwencjach za pomoca 10 liczb - po 2 na sekwencje
+    	
+    	int howManyEmpty[] = {0, 0, 0, 0, 0};//trzyma informacje o liczbie pustych pol, przy czym puste sa tez te zajmowane przez gracza
+											//chodzi o to zeby mozna bylo ulozyc sekwencje 5 pionkow
+    	int howManyElements[] = {0, 0, 0, 0, 0};//trzyma informacje o liczbie pionkow gracza w sekwencji
+    	
+    	for(int i=0;i<board.size();i++) {
+    		//podliczanie sekwencji, ktora osiagnela 5 pol
+    		//jesli wszystkie 5 pol jest zajetych to od razu gracz wygrywa
+    		if (howManyElements[i%5] == 5) {
+    			wins = true;
+    			return 0;
+    		}
+    		//punkty dodajemy tylko jesli istnieje mozliwosc zajecia wszystkich pol przez gracza
+    		if (howManyEmpty[i%5] == 5)
+    			pointSum += (int) Math.pow(base, howManyElements[i%5]);
+    		
+    		//zerowanie podliczonej sekwencji
+    		howManyEmpty[i%5] = 0;
+    		howManyElements[i%5] = 0;
+    		
+    		//pole puste - zwiekszamy wszystkim sekwencjom informacje o pustym polu
+    		if (board.getPiece(numberOfColumn, i) == null) {
+    			howManyEmpty[0]++;
+    			howManyEmpty[1]++;
+    			howManyEmpty[2]++;
+    			howManyEmpty[3]++;
+    			howManyEmpty[4]++;
+    		}
+    		else {
+	    		//nasz kolor - zwiekszamy informacje o ilosci pustych i pionkow gracza
+	    		if (board.getPiece(numberOfColumn, i).getColor() == color) {
+	    			howManyEmpty[0]++; howManyElements[0]++;
+	    			howManyEmpty[1]++; howManyElements[1]++;
+	    			howManyEmpty[2]++; howManyElements[2]++;
+	    			howManyEmpty[3]++; howManyElements[3]++;
+	    			howManyEmpty[4]++; howManyElements[4]++;
+	            }
+	    		//kolor przeciwnika - nie robimy nic
+    		}
+    	}
+    	return pointSum;
     }
 
 
     public int checkCantLeftToRight(int startRow, int startColumn, Board board, Piece.Color color) {
         int pointSum = 0;
-        int whichInLine = 0;
-        int emptyCurrent = 0;
-        int emptyBefore = 0;
+    	//dzialanie opiera sie na sprawdzaniu kolejnych sekwencji po 5 pol,ale w 1 iteracji
+    	//przy czym kazda zaczyna sie zaraz za poprzednia, dlatego potrzeba pamietac informacje
+    	//o 5 takich sekwencjach za pomoca 10 liczb - po 2 na sekwencje
+    	
+    	int howManyEmpty[] = {0, 0, 0, 0, 0};//trzyma informacje o liczbie pustych pol, przy czym puste sa tez te zajmowane przez gracza
+											//chodzi o to zeby mozna bylo ulozyc sekwencje 5 pionkow
+    	int howManyElements[] = {0, 0, 0, 0, 0};//trzyma informacje o liczbie pionkow gracza w sekwencji
+        
+
         int currentColumn = startColumn;
+        int seqIndex = 0; //pomocnicza zmienna okreslajaca aktualnie podliczana sekwencje
+        
         for(int currentRow = startRow;currentRow < board.size() && currentColumn < board.size();
             currentRow++, currentColumn++) {
-
-
-            if (board.getPiece(currentRow, currentColumn) != null) {
-                // Przerwany został szereg pustych pól, więc zapisujemy ile było pustych i zerujemy
-                // NIE uwzględnia to, że pomiedzy naszymi kamykami może być wiele przerw
-                if( emptyCurrent != 0 ) {
-                    emptyBefore = emptyCurrent;
-                    emptyCurrent = 0;
-
-                    if( whichInLine > 0 && whichInLine <= 5 && (emptyBefore+whichInLine >= 5 || board.getPiece(currentRow, currentColumn).getColor() == color) ) {
-                        pointSum += (int) Math.pow(base, whichInLine);
-                        if( whichInLine == 5 ) {
-                            wins = true;
-                        }
-                    }
-                    whichInLine = 0;
-                }
-
-                // Nasz kolor
-                if (board.getPiece(currentRow, currentColumn).getColor() == color) {
-                    whichInLine++;
-                }
-
-                // Kolor przeciwnika, trzeba wyzerować wszystko i ewentualnie przypisać punkty
-                else {
-                    // emptyCurrent == 0, dlatego nie sprawdzam
-                    if( whichInLine > 0 && whichInLine <= 5 && emptyBefore+whichInLine >= 5) {
-                        pointSum += (int) Math.pow(base, whichInLine);
-                        if( whichInLine == 5 ) {
-                            wins = true;
-                        }
-                    }
-                    whichInLine = 0;
-                    emptyBefore = 0;
-                }
-            }
-            // Pole jest puste
-            else {
-                emptyCurrent++;
-            }
-        }
-
-        if( whichInLine > 0 && whichInLine <= 5 && emptyCurrent+emptyBefore+whichInLine >= 5 ) {
-            pointSum += (int) Math.pow(base, whichInLine);
-            emptyCurrent = 0;
-            if( whichInLine == 5 ) {
-                wins = true;
-            }
-        }
+        	
+    		//podliczanie sekwencji, ktora osiagnela 5 pol
+    		//jesli wszystkie 5 pol jest zajetych to od razu gracz wygrywa
+    		if (howManyElements[seqIndex] == 5) {
+    			wins = true;
+    			return 0;
+    		}
+    		//punkty dodajemy tylko jesli istnieje mozliwosc zajecia wszystkich pol przez gracza
+    		if (howManyEmpty[seqIndex] == 5)
+    			pointSum += (int) Math.pow(base, howManyElements[seqIndex]);
+    		
+    		//zerowanie podliczonej sekwencji
+    		howManyEmpty[seqIndex] = 0;
+    		howManyElements[seqIndex] = 0;
+    		
+    		//pole puste - zwiekszamy wszystkim sekwencjom informacje o pustym polu
+    		if (board.getPiece(currentRow, currentColumn) == null) {
+    			howManyEmpty[0]++;
+    			howManyEmpty[1]++;
+    			howManyEmpty[2]++;
+    			howManyEmpty[3]++;
+    			howManyEmpty[4]++;
+    		}
+    		else {
+	    		//nasz kolor - zwiekszamy informacje o ilosci pustych i pionkow gracza
+	    		if (board.getPiece(currentRow, currentColumn).getColor() == color) {
+	    			howManyEmpty[0]++; howManyElements[0]++;
+	    			howManyEmpty[1]++; howManyElements[1]++;
+	    			howManyEmpty[2]++; howManyElements[2]++;
+	    			howManyEmpty[3]++; howManyElements[3]++;
+	    			howManyEmpty[4]++; howManyElements[4]++;
+	            }
+	    		//kolor przeciwnika - nie robimy nic
+    		}
+    		
+    		seqIndex = (seqIndex+1)%5;
+    	}
 
         return pointSum;
     }
 
 
     public int checkCantRightToLeft(int startRow, int startColumn, Board board, Piece.Color color) {
-        int pointSum = 0;
-        int whichInLine = 0;
-        int emptyCurrent = 0;
-        int emptyBefore = 0;
+    	int pointSum = 0;
+    	
+    	//dzialanie opiera sie na sprawdzaniu kolejnych sekwencji po 5 pol,ale w 1 iteracji
+    	//przy czym kazda zaczyna sie zaraz za poprzednia, dlatego potrzeba pamietac informacje
+    	//o 5 takich sekwencjach za pomoca 10 liczb - po 2 na sekwencje
+    	
+    	int howManyEmpty[] = {0, 0, 0, 0, 0};			//trzyma informacje o liczbie pustych pol, przy czym puste sa tez te zajmowane przez gracza
+														//chodzi o to zeby mozna bylo ulozyc sekwencje 5 pionkow
+    	int howManyElements[] = {0, 0, 0, 0, 0};		//trzyma informacje o liczbie pionkow gracza w sekwencji
+        
+    	
+        int seqIndex = 0; 	//pomocnicza zmienna okreslajaca aktualnie podliczana sekwencje
+        
         int currentRow = startRow;
+        
         for(int currentColumn = startColumn;currentColumn < board.size();currentColumn++) {
 
-            if (board.getPiece(currentRow, currentColumn) != null) {
-                // Przerwany został szereg pustych pól, więc zapisujemy ile było pustych i zerujemy
-                // NIE uwzględnia to, że pomiedzy naszymi kamykami może być wiele przerw
-                if( emptyCurrent != 0 ) {
-                    emptyBefore = emptyCurrent;
-                    emptyCurrent = 0;
-
-                    if( whichInLine > 0 && whichInLine <= 5 && (emptyBefore+whichInLine >= 5 || board.getPiece(currentRow, currentColumn).getColor() == color) ) {
-                        pointSum += (int) Math.pow(base, whichInLine);
-                        if( whichInLine == 5 ) {
-                            wins = true;
-                        }
-                    }
-                    whichInLine = 0;
-                }
-
-                // Nasz kolor
-                if (board.getPiece(currentRow, currentColumn).getColor() == color) {
-                    whichInLine++;
-                }
-
-                // Kolor przeciwnika, trzeba wyzerować wszystko i ewentualnie przypisać punkty
-                else {
-                    // emptyCurrent == 0, dlatego nie sprawdzam
-                    if( whichInLine > 0 && whichInLine <= 5 && emptyBefore+whichInLine >= 5) {
-                        pointSum += (int) Math.pow(base, whichInLine);
-                        if( whichInLine == 5 ) {
-                            wins = true;
-                        }
-                    }
-                    whichInLine = 0;
-                    emptyBefore = 0;
-                }
-            }
-            // Pole jest puste
-            else {
-                emptyCurrent++;
-            }
+    		//podliczanie sekwencji, ktora osiagnela 5 pol
+    		//jesli wszystkie 5 pol jest zajetych to od razu gracz wygrywa
+    		if (howManyElements[seqIndex] == 5) {
+    			wins = true;
+    			return 0;
+    		}
+    		//punkty dodajemy tylko jesli istnieje mozliwosc zajecia wszystkich pol przez gracza
+    		if (howManyEmpty[seqIndex] == 5)
+    			pointSum += (int) Math.pow(base, howManyElements[seqIndex]);
+    		
+    		//zerowanie podliczonej sekwencji
+    		howManyEmpty[seqIndex] = 0;
+    		howManyElements[seqIndex] = 0;
+    		
+    		//pole puste - zwiekszamy wszystkim sekwencjom informacje o pustym polu
+    		if (board.getPiece(currentRow, currentColumn) == null) {
+    			howManyEmpty[0]++;
+    			howManyEmpty[1]++;
+    			howManyEmpty[2]++;
+    			howManyEmpty[3]++;
+    			howManyEmpty[4]++;
+    		}
+    		else {
+	    		//nasz kolor - zwiekszamy informacje o ilosci pustych i pionkow gracza
+	    		if (board.getPiece(currentRow, currentColumn).getColor() == color) {
+	    			howManyEmpty[0]++; howManyElements[0]++;
+	    			howManyEmpty[1]++; howManyElements[1]++;
+	    			howManyEmpty[2]++; howManyElements[2]++;
+	    			howManyEmpty[3]++; howManyElements[3]++;
+	    			howManyEmpty[4]++; howManyElements[4]++;
+	            }
+	    		//kolor przeciwnika - nie robimy nic
+    		}
 
             currentRow--;
             if (currentRow < 0)
                 break;
-        }
-
-        if( whichInLine > 0 && whichInLine <= 5 && emptyCurrent+emptyBefore+whichInLine >= 5 ) {
-            pointSum += (int) Math.pow(base, whichInLine);
-            emptyCurrent = 0;
-            if( whichInLine == 5 ) {
-                wins = true;
-            }
+            
+            seqIndex = (seqIndex+1)%5;
         }
 
         return pointSum;
