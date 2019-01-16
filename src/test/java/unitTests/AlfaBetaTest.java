@@ -1,3 +1,4 @@
+/*
 package unitTests;
 
 import static org.junit.Assert.*;
@@ -8,7 +9,7 @@ import model.AlfaBetaAlgorithm;
 import model.Board;
 import model.Piece;
 
-public class AlfaBetaTests {
+public class AlfaBetaTest {
 
 	@Test
 	public void onePiecedepthOne() {
@@ -66,3 +67,4 @@ public class AlfaBetaTests {
 	}
 
 }
+*/

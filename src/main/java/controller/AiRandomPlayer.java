@@ -1,6 +1,5 @@
 package controller;
 
-import javafx.application.Platform;
 import model.Board;
 import model.Piece;
 import model.Player;
@@ -10,15 +9,13 @@ import java.util.Random;
 
 public class AiRandomPlayer extends Player {
 
-    private GameController gameController;
     private Random r = new Random();
 
-    public AiRandomPlayer(GameController g){
-        this.gameController = g;
+    public AiRandomPlayer(){
+
     }
 
     public Board.Position makeMove(Board b, model.Piece.Color c) {
-        //Platform.runLater(() ->gameController.setCurrentPlayer(this, c));
 
         Board.Position pos = new Board.Position(Math.abs(r.nextInt()%15), Math.abs(r.nextInt()%15) );
 
@@ -34,7 +31,6 @@ public class AiRandomPlayer extends Player {
             black.add(makeMove(b, Piece.Color.Black));
         }
 
-        //Platform.runLater(() -> gameController.setCurrentPlayer(this, Piece.Color.White));
         for(int i = 0; i < white_count; ++i) {
             white.add(makeMove(b, Piece.Color.White));
         }

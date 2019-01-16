@@ -2,14 +2,14 @@ package model;
 
 public class AlfaBetaAlgorithm {
 	private Board.Position theBestMove;
-	Heuristic2 h;
+	Heuristic h;
 	Piece.Color color;
 	int originalDepth;
 	
 	
 	public AlfaBetaAlgorithm(int depth) {
 		theBestMove = new Board.Position(0, 0);
-		h = new Heuristic2();
+		h = new Heuristic();
 		originalDepth = depth;
 		color = Piece.Color.Black;
 	}

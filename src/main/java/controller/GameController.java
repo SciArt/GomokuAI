@@ -66,14 +66,12 @@ public class GameController implements Observer
 	{
 		player1 = p;
 		gametable.setFirstPlayer(player1);
-		System.out.println(p);
 	}
 
 	public void setPlayer2(Player p)
 	{
 		player2 = p;
 		gametable.setSecondPlayer(player2);
-		System.out.println(p);
 	}
 
 	public void update(Observable o, Object ob)
@@ -114,8 +112,8 @@ public class GameController implements Observer
 		if( numberOfExperiments == 0 )
 			numberOfExperiments = 10;
 
-		gametable.setFirstPlayer(new AiRandomPlayer(this));
-		gametable.setSecondPlayer(new AiRandomPlayer(this));
+		gametable.setFirstPlayer(new AiRandomPlayer());
+		gametable.setSecondPlayer(new AiRandomPlayer());
 
 		startGame();
 	}
@@ -213,7 +211,6 @@ class GametableThread extends Thread {
 	}
 
 	public void quit(){
-		System.out.println("Closing thread with gametable...");
 		stop();
 	}
 }

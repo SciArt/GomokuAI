@@ -2,13 +2,12 @@ package view;
 
 import controller.GameController;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Slider;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
@@ -164,19 +163,19 @@ public class Sidebar extends ScrollPane {
 
     private void setPlayerTypeAsAI(Player p, int depth) {
         if( p == player1 ) {
-        	gameController.setPlayer1(new controller.AiHeuristicPlayer(gameController, depth));
+        	gameController.setPlayer1(new controller.AiHeuristicPlayer(depth));
         }
         else if( p == player2 ) {
-        	gameController.setPlayer2(new controller.AiHeuristicPlayer(gameController, depth));
+        	gameController.setPlayer2(new controller.AiHeuristicPlayer(depth));
         }
     }
 
     private void setPlayerTypeAsRandom(Player p) {
         if( p == player1 ) {
-        	gameController.setPlayer1(new controller.AiRandomPlayer(gameController));
+        	gameController.setPlayer1(new controller.AiRandomPlayer());
         }
         else if( p == player2 ) {
-        	gameController.setPlayer2(new controller.AiRandomPlayer(gameController));
+        	gameController.setPlayer2(new controller.AiRandomPlayer());
         }
     }
 }

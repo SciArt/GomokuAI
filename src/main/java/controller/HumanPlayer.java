@@ -12,18 +12,17 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
-import java.util.concurrent.Semaphore;
 
 public class HumanPlayer extends Player {
 
     private GameController gameController;
 	
 	public HumanPlayer(GameController g){
-		this.gameController = g;
+
+	    this.gameController = g;
 	}
 
     public Board.Position makeMove(Board b, model.Piece.Color c) {
-        //Platform.runLater(() ->gameController.setCurrentPlayer(this, c));
 
         return gameController.makeMove();
     }
@@ -33,12 +32,10 @@ public class HumanPlayer extends Player {
         ArrayList<Board.Position> black = new ArrayList<>();
         ArrayList<Board.Position> white = new ArrayList<>();
 
-        //Platform.runLater(() ->gameController.setCurrentPlayer(this, Piece.Color.Black));
         for(int i = 0; i < black_count; ++i) {
         	black.add(gameController.makeMove());
         }
 
-        //Platform.runLater(() -> gameController.setCurrentPlayer(this, Piece.Color.White));
         for(int i = 0; i < white_count; ++i) {
         	white.add(gameController.makeMove());
         }
@@ -48,8 +45,7 @@ public class HumanPlayer extends Player {
 
     public boolean doPickColor(Board b) {
 
-        //Platform.runLater(() -> gameController.setCurrentPlayer(this, null));
-        FutureTask<Optional<ButtonType>> futureTask = new FutureTask(
+	    FutureTask<Optional<ButtonType>> futureTask = new FutureTask(
                 new pickColorPrompt1()
         );
         Platform.runLater(futureTask);
@@ -65,7 +61,6 @@ public class HumanPlayer extends Player {
 
     public Piece.Color pickColor(Board b) {
 
-        //Platform.runLater(() -> gameController.setCurrentPlayer(this, null));
         FutureTask<Piece.Color> futureTask = new FutureTask(
                 new pickColorPrompt2()
         );
@@ -80,7 +75,8 @@ public class HumanPlayer extends Player {
     }
 
     class pickColorPrompt1 implements Callable<Optional<ButtonType>> {
-        @Override public Optional<ButtonType> call() {
+
+	    @Override public Optional<ButtonType> call() {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Pick color");
             alert.setHeaderText(null);
@@ -90,7 +86,8 @@ public class HumanPlayer extends Player {
     }
 
     class pickColorPrompt2 implements Callable<Piece.Color> {
-        @Override public Piece.Color call() {
+
+	    @Override public Piece.Color call() {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Pick color");
             alert.setHeaderText(null);

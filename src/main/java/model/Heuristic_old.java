@@ -1,7 +1,7 @@
 package model;
 
 @SuppressWarnings("ALL")
-public class Heuristic2 {
+public class Heuristic_old {
     private int playerPoints;
     private int opponentPoints;
 
@@ -11,7 +11,7 @@ public class Heuristic2 {
 
     private int base = 10;
 
-    public Heuristic2() {
+    public Heuristic_old() {
         playerPoints = 0;
         opponentPoints = 0;
     }
@@ -36,12 +36,12 @@ public class Heuristic2 {
             opponentPoints = Integer.MAX_VALUE;
         }
 
-       if( opponentPoints == Integer.MAX_VALUE )
-           return -opponentPoints;
+        if( opponentPoints == Integer.MAX_VALUE )
+            return -opponentPoints;
         if( playerPoints == Integer.MAX_VALUE )
             return playerPoints;
 
-       return playerPoints - opponentPoints;
+        return playerPoints - opponentPoints;
     }
 
     public int getContestantPoints (Board board, Piece.Color color) {
