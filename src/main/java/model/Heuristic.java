@@ -5,7 +5,7 @@ public class Heuristic {
     private int playerPoints;
     private int opponentPoints;
 
-    private int base = 10;
+    private int base = 40;
 
     private boolean wins = false;
     
