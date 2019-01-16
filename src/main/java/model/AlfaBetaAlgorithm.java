@@ -20,8 +20,8 @@ public class AlfaBetaAlgorithm {
 	
 	public int minimaxAlfabeta(Board board, Piece.Color color){
 		for (int i = 0; i < board.size()*board.size(); i++){
-			if (board.getPiece(i/15, i%15) == null) {
-				theBestMove = new Board.Position(i/15, i%15);
+			if (board.getPiece(i/board.size(), i%board.size()) == null) {
+				theBestMove = new Board.Position(i/board.size(), i%board.size());
 				break;
 			}
 		}
