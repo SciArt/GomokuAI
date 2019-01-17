@@ -14,7 +14,6 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 
 		gameController = new GameController(primaryStage);
-
 		primaryStage.setOnCloseRequest(event -> {
 			event.consume();
 			gameController.closeApp();

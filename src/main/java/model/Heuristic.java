@@ -5,7 +5,7 @@ public class Heuristic {
     private int playerPoints;
     private int opponentPoints;
 
-    private int base = 40;
+    private int base = 50;
 
     private boolean wins = false;
     
@@ -19,8 +19,10 @@ public class Heuristic {
 
         playerPoints = getContestantPoints(board, playerColor);
 
-        if( wins )
+        if( wins ) {
             playerPoints = Integer.MAX_VALUE;
+            return playerPoints;
+        }
 
         wins = false;
 
@@ -30,14 +32,9 @@ public class Heuristic {
             opponentPoints = getContestantPoints(board, Piece.Color.White);
 
         if( wins ) {
-            playerPoints = 0;
             opponentPoints = Integer.MAX_VALUE;
-        }
-
-        if( opponentPoints == Integer.MAX_VALUE )
             return -opponentPoints;
-        if( playerPoints == Integer.MAX_VALUE )
-            return playerPoints;
+        }
 
         return playerPoints - opponentPoints;
     }
@@ -77,20 +74,6 @@ public class Heuristic {
     	int howManyElements[] = {0, 0, 0, 0, 0};//trzyma informacje o liczbie pionkow gracza w sekwencji
     	
     	for(int i=0;i<board.size();i++) {
-    		//podliczanie sekwencji, ktora osiagnela 5 pol
-    		//jesli wszystkie 5 pol jest zajetych to od razu gracz wygrywa
-    		if (howManyElements[i%5] == 5) {
-    			wins = true;
-    			return 0;
-    		}
-    		//punkty dodajemy tylko jesli istnieje mozliwosc zajecia wszystkich pol przez gracza
-    		if (howManyEmpty[i%5] == 5)
-    			pointSum += (int) Math.pow(base, howManyElements[i%5]);
-    		
-    		//zerowanie podliczonej sekwencji
-    		howManyEmpty[i%5] = 0;
-    		howManyElements[i%5] = 0;
-    		
     		//pole puste - zwiekszamy wszystkim sekwencjom informacje o pustym polu
     		if (board.getPiece(i, numberOfRow) == null) {
     			howManyEmpty[0]++;
@@ -110,6 +93,20 @@ public class Heuristic {
 	            }
 	    		//kolor przeciwnika - nie robimy nic
     		}
+    		
+    		//podliczanie sekwencji, ktora osiagnela 5 pol
+    		//jesli wszystkie 5 pol jest zajetych to od razu gracz wygrywa
+    		if (howManyElements[i%5] == 5) {
+    			wins = true;
+    			return 0;
+    		}
+    		//punkty dodajemy tylko jesli istnieje mozliwosc zajecia wszystkich pol przez gracza
+    		if (howManyEmpty[i%5] == 5 && howManyElements[i%5] > 0)
+    			pointSum += (int) Math.pow(base, howManyElements[i%5]);
+    		
+    		//zerowanie podliczonej sekwencji
+    		howManyEmpty[i%5] = 0;
+    		howManyElements[i%5] = 0;
     	}
     	
     	return pointSum;
@@ -127,20 +124,6 @@ public class Heuristic {
     	int howManyElements[] = {0, 0, 0, 0, 0};//trzyma informacje o liczbie pionkow gracza w sekwencji
     	
     	for(int i=0;i<board.size();i++) {
-    		//podliczanie sekwencji, ktora osiagnela 5 pol
-    		//jesli wszystkie 5 pol jest zajetych to od razu gracz wygrywa
-    		if (howManyElements[i%5] == 5) {
-    			wins = true;
-    			return 0;
-    		}
-    		//punkty dodajemy tylko jesli istnieje mozliwosc zajecia wszystkich pol przez gracza
-    		if (howManyEmpty[i%5] == 5)
-    			pointSum += (int) Math.pow(base, howManyElements[i%5]);
-    		
-    		//zerowanie podliczonej sekwencji
-    		howManyEmpty[i%5] = 0;
-    		howManyElements[i%5] = 0;
-    		
     		//pole puste - zwiekszamy wszystkim sekwencjom informacje o pustym polu
     		if (board.getPiece(numberOfColumn, i) == null) {
     			howManyEmpty[0]++;
@@ -160,6 +143,20 @@ public class Heuristic {
 	            }
 	    		//kolor przeciwnika - nie robimy nic
     		}
+    		
+    		//podliczanie sekwencji, ktora osiagnela 5 pol
+    		//jesli wszystkie 5 pol jest zajetych to od razu gracz wygrywa
+    		if (howManyElements[i%5] == 5) {
+    			wins = true;
+    			return 0;
+    		}
+    		//punkty dodajemy tylko jesli istnieje mozliwosc zajecia wszystkich pol przez gracza
+    		if (howManyEmpty[i%5] == 5 && howManyElements[i%5] > 0)
+    			pointSum += (int) Math.pow(base, howManyElements[i%5]);
+    		
+    		//zerowanie podliczonej sekwencji
+    		howManyEmpty[i%5] = 0;
+    		howManyElements[i%5] = 0;
     	}
     	return pointSum;
     }
@@ -181,20 +178,6 @@ public class Heuristic {
         
         for(int currentRow = startRow;currentRow < board.size() && currentColumn < board.size();
             currentRow++, currentColumn++) {
-        	
-    		//podliczanie sekwencji, ktora osiagnela 5 pol
-    		//jesli wszystkie 5 pol jest zajetych to od razu gracz wygrywa
-    		if (howManyElements[seqIndex] == 5) {
-    			wins = true;
-    			return 0;
-    		}
-    		//punkty dodajemy tylko jesli istnieje mozliwosc zajecia wszystkich pol przez gracza
-    		if (howManyEmpty[seqIndex] == 5)
-    			pointSum += (int) Math.pow(base, howManyElements[seqIndex]);
-    		
-    		//zerowanie podliczonej sekwencji
-    		howManyEmpty[seqIndex] = 0;
-    		howManyElements[seqIndex] = 0;
     		
     		//pole puste - zwiekszamy wszystkim sekwencjom informacje o pustym polu
     		if (board.getPiece(currentRow, currentColumn) == null) {
@@ -215,6 +198,20 @@ public class Heuristic {
 	            }
 	    		//kolor przeciwnika - nie robimy nic
     		}
+    		
+    		//podliczanie sekwencji, ktora osiagnela 5 pol
+    		//jesli wszystkie 5 pol jest zajetych to od razu gracz wygrywa
+    		if (howManyElements[seqIndex] == 5) {
+    			wins = true;
+    			return 0;
+    		}
+    		//punkty dodajemy tylko jesli istnieje mozliwosc zajecia wszystkich pol przez gracza
+    		if (howManyEmpty[seqIndex] == 5 && howManyElements[seqIndex] > 0)
+    			pointSum += (int) Math.pow(base, howManyElements[seqIndex]);
+    		
+    		//zerowanie podliczonej sekwencji
+    		howManyEmpty[seqIndex] = 0;
+    		howManyElements[seqIndex] = 0;
     		
     		seqIndex = (seqIndex+1)%5;
     	}
@@ -240,20 +237,6 @@ public class Heuristic {
         int currentRow = startRow;
         
         for(int currentColumn = startColumn;currentColumn < board.size();currentColumn++) {
-
-    		//podliczanie sekwencji, ktora osiagnela 5 pol
-    		//jesli wszystkie 5 pol jest zajetych to od razu gracz wygrywa
-    		if (howManyElements[seqIndex] == 5) {
-    			wins = true;
-    			return 0;
-    		}
-    		//punkty dodajemy tylko jesli istnieje mozliwosc zajecia wszystkich pol przez gracza
-    		if (howManyEmpty[seqIndex] == 5)
-    			pointSum += (int) Math.pow(base, howManyElements[seqIndex]);
-    		
-    		//zerowanie podliczonej sekwencji
-    		howManyEmpty[seqIndex] = 0;
-    		howManyElements[seqIndex] = 0;
     		
     		//pole puste - zwiekszamy wszystkim sekwencjom informacje o pustym polu
     		if (board.getPiece(currentRow, currentColumn) == null) {
@@ -274,6 +257,20 @@ public class Heuristic {
 	            }
 	    		//kolor przeciwnika - nie robimy nic
     		}
+    		
+    		//podliczanie sekwencji, ktora osiagnela 5 pol
+    		//jesli wszystkie 5 pol jest zajetych to od razu gracz wygrywa
+    		if (howManyElements[seqIndex] == 5) {
+    			wins = true;
+    			return 0;
+    		}
+    		//punkty dodajemy tylko jesli istnieje mozliwosc zajecia wszystkich pol przez gracza
+    		if (howManyEmpty[seqIndex] == 5 && howManyElements[seqIndex] > 0)
+    			pointSum += (int) Math.pow(base, howManyElements[seqIndex]);
+    		
+    		//zerowanie podliczonej sekwencji
+    		howManyEmpty[seqIndex] = 0;
+    		howManyElements[seqIndex] = 0;
 
             currentRow--;
             if (currentRow < 0)
