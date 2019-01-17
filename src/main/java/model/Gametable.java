@@ -223,14 +223,14 @@ public class Gametable extends Observable
 	}
 	
 	private PlayerSlot regularGame()
-	{
-		this.setChanged();
-		this.notifyObservers();
-		this.clearChanged();
-		
+	{		
 		Board.Position pos;
 		
 		current = (first.color == Piece.Color.White) ? first : second;
+		
+		this.setChanged();
+		this.notifyObservers();
+		this.clearChanged();
 		
 		do
 		{
