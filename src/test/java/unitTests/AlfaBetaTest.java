@@ -1,4 +1,4 @@
-/*
+
 package unitTests;
 
 import static org.junit.Assert.*;
@@ -18,10 +18,10 @@ public class AlfaBetaTest {
 		 
 		int h = alfabeta.minimaxAlfabeta(board, Piece.Color.White);
 	    Board.Position position = alfabeta.getTheBestMove();
-	    Board.Position expectingPosition = new Board.Position(0, 0);
+	    Board.Position expectingPosition = new Board.Position(2, 2);
 		 
 		assertEquals(expectingPosition, position);
-		assertEquals(4, h);
+		assertEquals(200, h);
 	}
 	
 	@Test
@@ -38,10 +38,10 @@ public class AlfaBetaTest {
 		 
 		int h = alfabeta.minimaxAlfabeta(board, Piece.Color.Black);
 	    Board.Position position = alfabeta.getTheBestMove();
-	    Board.Position expectingPosition = new Board.Position(0, 2);
+	    Board.Position expectingPosition = new Board.Position(0, 4);
 		 
 		assertEquals(expectingPosition, position);
-		assertEquals(116, h);
+		assertEquals(125150, h);
 	}
 	
 	@Test
@@ -60,11 +60,11 @@ public class AlfaBetaTest {
 		 
 		int h = alfabeta.minimaxAlfabeta(board, Piece.Color.Black);
 	    Board.Position position = alfabeta.getTheBestMove();
-	    Board.Position expectingPosition = new Board.Position(2, 0);
+	    Board.Position expectingPosition = new Board.Position(4, 0);
 		 
 		assertEquals(expectingPosition, position);
-		assertEquals(134, h);
+		assertEquals(122600, h);
 	}
 
 }
-*/
+
