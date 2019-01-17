@@ -21,6 +21,7 @@ import java.util.Optional;
 
 public class GameController implements Observer
 {
+	long startTime;
 	private int numberOfExperiments = 0;
 
 	private Sidebar sidebar = new Sidebar(this);
@@ -76,6 +77,9 @@ public class GameController implements Observer
 
 	public void update(Observable o, Object ob)
 	{
+		long elapsedTime = System.currentTimeMillis() - startTime;
+		startTime = System.currentTimeMillis();
+
 		if( gametable.getTurnNumber() > 10 ) {
 			gametable.setFirstPlayer(player1);
 			gametable.setSecondPlayer(player2);
@@ -96,9 +100,21 @@ public class GameController implements Observer
 		}
 
 		Platform.runLater(() -> sidebar.setCurrentInfoText(gametable.getCurrentPlayerSlot().toString()));
+
+		//if( gametable.getTurnNumber() > 10 ) {
+		try {
+			FileWriter fileWriter = new FileWriter("experiments_time.txt", true);
+			BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+			bufferedWriter.write(elapsedTime + "\n");
+			bufferedWriter.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		//}
 	}
 
 	public void startGame(){
+		startTime = System.currentTimeMillis();
 		sidebar.setCurrentInfoText("Game is starting...");
 		if( gametableThread != null )
 			gametableThread.quit();

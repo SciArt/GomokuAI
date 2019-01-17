@@ -116,6 +116,10 @@ public class Gametable extends Observable
 	{
 		if(current == first) current = second;
 		else if(current == second) current = first;
+		
+		this.setChanged();
+		this.notifyObservers();
+		this.clearChanged();
 	}
 	
 	private void setCurrentColor(Piece.Color color)
@@ -223,14 +227,14 @@ public class Gametable extends Observable
 	}
 	
 	private PlayerSlot regularGame()
-	{
-		this.setChanged();
-		this.notifyObservers();
-		this.clearChanged();
-		
+	{		
 		Board.Position pos;
 		
 		current = (first.color == Piece.Color.White) ? first : second;
+		
+		this.setChanged();
+		this.notifyObservers();
+		this.clearChanged();
 		
 		do
 		{
